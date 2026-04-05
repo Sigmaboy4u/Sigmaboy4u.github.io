@@ -1,11 +1,921 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <title>My Website</title>
-  </head>
-  <body>
-    <h1>Hello World! 👋</h1>
-    <p>This is my first website.</p>
-  </body>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>NEXUS TOOLS — Elite Game Externals</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;600;700&family=Syne:wght@400;500;700;800&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --gold: #c9a84c;
+      --gold-light: #e8c97a;
+      --gold-dim: #7a6030;
+      --bg: #080808;
+      --bg2: #0e0e0e;
+      --bg3: #141414;
+      --text: #e8e0d0;
+      --muted: #6b6458;
+      --border: rgba(201,168,76,0.15);
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Syne', sans-serif;
+      overflow-x: hidden;
+      cursor: none;
+    }
+
+    /* ── CUSTOM CURSOR ── */
+    #cursor {
+      position: fixed;
+      width: 12px; height: 12px;
+      background: var(--gold);
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 9999;
+      transform: translate(-50%, -50%);
+      transition: transform 0.1s, width 0.3s, height 0.3s, background 0.3s;
+      mix-blend-mode: difference;
+    }
+    #cursor-ring {
+      position: fixed;
+      width: 40px; height: 40px;
+      border: 1px solid rgba(201,168,76,0.5);
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 9998;
+      transform: translate(-50%, -50%);
+      transition: transform 0.12s ease-out, width 0.3s, height 0.3s, border-color 0.3s;
+    }
+    body:has(a:hover) #cursor,
+    body:has(button:hover) #cursor { width: 20px; height: 20px; }
+    body:has(a:hover) #cursor-ring,
+    body:has(button:hover) #cursor-ring { width: 60px; height: 60px; border-color: var(--gold); }
+
+    /* ── NOISE OVERLAY ── */
+    body::before {
+      content: '';
+      position: fixed; inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 9997;
+      opacity: 0.4;
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0;
+      z-index: 100;
+      padding: 24px 60px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid transparent;
+      transition: border-color 0.4s, background 0.4s, backdrop-filter 0.4s;
+    }
+    nav.scrolled {
+      border-color: var(--border);
+      background: rgba(8,8,8,0.85);
+      backdrop-filter: blur(20px);
+    }
+    .logo {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 22px;
+      font-weight: 700;
+      letter-spacing: 4px;
+      color: var(--gold);
+      text-transform: uppercase;
+    }
+    .nav-links { display: flex; gap: 40px; list-style: none; }
+    .nav-links a {
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 12px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      transition: color 0.3s;
+      cursor: none;
+    }
+    .nav-links a:hover { color: var(--gold); }
+    .nav-cta {
+      background: transparent;
+      border: 1px solid var(--gold);
+      color: var(--gold);
+      padding: 10px 28px;
+      font-family: 'Syne', sans-serif;
+      font-size: 11px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      cursor: none;
+      transition: background 0.3s, color 0.3s;
+    }
+    .nav-cta:hover { background: var(--gold); color: var(--bg); }
+
+    /* ── HERO ── */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 140px 40px 80px;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero-glow {
+      position: absolute;
+      width: 600px; height: 600px;
+      background: radial-gradient(circle, rgba(201,168,76,0.08) 0%, transparent 70%);
+      border-radius: 50%;
+      pointer-events: none;
+      transition: transform 0.1s ease-out;
+    }
+    .hero-line {
+      font-size: 11px;
+      letter-spacing: 6px;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 32px;
+      opacity: 0;
+      animation: fadeUp 0.8s ease forwards 0.2s;
+    }
+    .hero-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(64px, 10vw, 130px);
+      font-weight: 300;
+      line-height: 0.9;
+      letter-spacing: -2px;
+      margin-bottom: 40px;
+      opacity: 0;
+      animation: fadeUp 0.8s ease forwards 0.4s;
+    }
+    .hero-title em {
+      font-style: italic;
+      color: var(--gold);
+    }
+    .hero-sub {
+      max-width: 480px;
+      font-size: 14px;
+      line-height: 1.8;
+      color: var(--muted);
+      margin-bottom: 56px;
+      opacity: 0;
+      animation: fadeUp 0.8s ease forwards 0.6s;
+    }
+    .hero-btns {
+      display: flex; gap: 16px;
+      opacity: 0;
+      animation: fadeUp 0.8s ease forwards 0.8s;
+    }
+    .btn-primary {
+      background: var(--gold);
+      color: var(--bg);
+      border: none;
+      padding: 16px 48px;
+      font-family: 'Syne', sans-serif;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      cursor: none;
+      transition: background 0.3s, transform 0.2s;
+    }
+    .btn-primary:hover { background: var(--gold-light); transform: translateY(-2px); }
+    .btn-ghost {
+      background: transparent;
+      color: var(--text);
+      border: 1px solid var(--border);
+      padding: 16px 48px;
+      font-family: 'Syne', sans-serif;
+      font-size: 12px;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      cursor: none;
+      transition: border-color 0.3s, color 0.3s;
+    }
+    .btn-ghost:hover { border-color: var(--gold); color: var(--gold); }
+
+    .hero-scroll {
+      position: absolute;
+      bottom: 40px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+      opacity: 0;
+      animation: fadeUp 0.8s ease forwards 1.2s;
+    }
+    .hero-scroll span {
+      font-size: 10px;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+    .scroll-line {
+      width: 1px; height: 60px;
+      background: linear-gradient(to bottom, var(--gold), transparent);
+      animation: scrollPulse 2s ease-in-out infinite;
+    }
+
+    /* ── TICKER ── */
+    .ticker {
+      background: var(--gold);
+      padding: 14px 0;
+      overflow: hidden;
+      white-space: nowrap;
+    }
+    .ticker-inner {
+      display: inline-flex;
+      animation: ticker 20s linear infinite;
+    }
+    .ticker-item {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      color: var(--bg);
+      padding: 0 40px;
+    }
+    .ticker-dot {
+      color: rgba(8,8,8,0.4);
+      padding: 0 8px;
+    }
+
+    /* ── STATS ── */
+    .stats {
+      padding: 100px 60px;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1px;
+      background: var(--border);
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+    }
+    .stat {
+      background: var(--bg);
+      padding: 60px 40px;
+      text-align: center;
+    }
+    .stat-num {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 72px;
+      font-weight: 300;
+      color: var(--gold);
+      line-height: 1;
+      display: block;
+    }
+    .stat-label {
+      font-size: 10px;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-top: 12px;
+      display: block;
+    }
+
+    /* ── SECTION HEADER ── */
+    .section-header {
+      text-align: center;
+      padding: 0 40px;
+      margin-bottom: 80px;
+    }
+    .section-tag {
+      font-size: 10px;
+      letter-spacing: 5px;
+      text-transform: uppercase;
+      color: var(--gold);
+      display: block;
+      margin-bottom: 20px;
+    }
+    .section-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(40px, 6vw, 72px);
+      font-weight: 300;
+      line-height: 1.1;
+    }
+    .section-title em { font-style: italic; color: var(--gold); }
+
+    /* ── PRODUCTS ── */
+    .products {
+      padding: 120px 60px;
+    }
+    .products-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2px;
+      background: var(--border);
+      border: 1px solid var(--border);
+    }
+    .product-card {
+      background: var(--bg2);
+      padding: 48px 40px;
+      position: relative;
+      overflow: hidden;
+      transition: background 0.4s;
+    }
+    .product-card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(201,168,76,0.05), transparent);
+      opacity: 0;
+      transition: opacity 0.4s;
+    }
+    .product-card:hover { background: var(--bg3); }
+    .product-card:hover::before { opacity: 1; }
+
+    .product-card.featured {
+      grid-column: span 2;
+      background: linear-gradient(135deg, #0e0e0e, #111108);
+    }
+    .product-badge {
+      display: inline-block;
+      font-size: 9px;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: var(--bg);
+      background: var(--gold);
+      padding: 5px 12px;
+      margin-bottom: 32px;
+    }
+    .product-name {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 38px;
+      font-weight: 400;
+      margin-bottom: 12px;
+      line-height: 1.1;
+    }
+    .product-game {
+      font-size: 10px;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: var(--gold-dim);
+      margin-bottom: 24px;
+    }
+    .product-desc {
+      font-size: 13px;
+      line-height: 1.8;
+      color: var(--muted);
+      margin-bottom: 36px;
+    }
+    .product-features {
+      list-style: none;
+      margin-bottom: 40px;
+    }
+    .product-features li {
+      font-size: 12px;
+      color: var(--muted);
+      padding: 8px 0;
+      border-bottom: 1px solid rgba(201,168,76,0.06);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .product-features li::before {
+      content: '—';
+      color: var(--gold);
+      font-size: 10px;
+    }
+    .product-footer {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+    }
+    .product-price {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 48px;
+      font-weight: 300;
+      color: var(--gold);
+      line-height: 1;
+    }
+    .product-price span {
+      font-size: 16px;
+      color: var(--muted);
+      font-family: 'Syne', sans-serif;
+    }
+    .product-price small {
+      font-size: 12px;
+      display: block;
+      color: var(--muted);
+      font-family: 'Syne', sans-serif;
+      letter-spacing: 1px;
+      margin-top: 4px;
+    }
+    .btn-card {
+      background: transparent;
+      border: 1px solid var(--gold);
+      color: var(--gold);
+      padding: 12px 28px;
+      font-family: 'Syne', sans-serif;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      cursor: none;
+      transition: all 0.3s;
+    }
+    .btn-card:hover { background: var(--gold); color: var(--bg); }
+
+    /* ── FEATURES STRIP ── */
+    .features {
+      padding: 120px 60px;
+      background: var(--bg2);
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+    }
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 60px;
+      margin-top: 80px;
+    }
+    .feature-icon {
+      font-size: 32px;
+      margin-bottom: 24px;
+      display: block;
+    }
+    .feature-name {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 28px;
+      font-weight: 400;
+      margin-bottom: 16px;
+      color: var(--text);
+    }
+    .feature-desc {
+      font-size: 13px;
+      line-height: 1.8;
+      color: var(--muted);
+    }
+
+    /* ── TESTIMONIALS ── */
+    .testimonials {
+      padding: 120px 60px;
+    }
+    .testi-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2px;
+      background: var(--border);
+      margin-top: 80px;
+      border: 1px solid var(--border);
+    }
+    .testi-card {
+      background: var(--bg2);
+      padding: 40px 36px;
+    }
+    .testi-stars {
+      color: var(--gold);
+      font-size: 12px;
+      letter-spacing: 3px;
+      margin-bottom: 20px;
+    }
+    .testi-text {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 20px;
+      font-weight: 300;
+      line-height: 1.6;
+      margin-bottom: 24px;
+      font-style: italic;
+    }
+    .testi-author {
+      font-size: 10px;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: var(--gold-dim);
+    }
+
+    /* ── CTA BANNER ── */
+    .cta-banner {
+      padding: 140px 60px;
+      text-align: center;
+      background: linear-gradient(135deg, #0a0900, var(--bg), #0a0900);
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      position: relative;
+      overflow: hidden;
+    }
+    .cta-banner::before {
+      content: 'NEXUS';
+      position: absolute;
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 300px;
+      font-weight: 700;
+      color: rgba(201,168,76,0.03);
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      white-space: nowrap;
+      pointer-events: none;
+    }
+    .cta-banner h2 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(40px, 7vw, 90px);
+      font-weight: 300;
+      line-height: 1.1;
+      margin-bottom: 32px;
+    }
+    .cta-banner h2 em { font-style: italic; color: var(--gold); }
+    .cta-banner p {
+      font-size: 14px;
+      color: var(--muted);
+      max-width: 420px;
+      margin: 0 auto 48px;
+      line-height: 1.8;
+    }
+
+    /* ── FOOTER ── */
+    footer {
+      padding: 60px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .footer-logo {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 18px;
+      font-weight: 700;
+      letter-spacing: 4px;
+      color: var(--gold);
+      text-transform: uppercase;
+    }
+    .footer-links { display: flex; gap: 32px; }
+    .footer-links a {
+      font-size: 10px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--muted);
+      text-decoration: none;
+      cursor: none;
+      transition: color 0.3s;
+    }
+    .footer-links a:hover { color: var(--gold); }
+    .footer-copy {
+      font-size: 10px;
+      letter-spacing: 1px;
+      color: var(--muted);
+    }
+
+    /* ── ANIMATIONS ── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes ticker {
+      from { transform: translateX(0); }
+      to   { transform: translateX(-50%); }
+    }
+    @keyframes scrollPulse {
+      0%, 100% { opacity: 0.4; transform: scaleY(1); }
+      50%       { opacity: 1;   transform: scaleY(1.1); }
+    }
+
+    .reveal {
+      opacity: 0;
+      transform: translateY(40px);
+      transition: opacity 0.8s ease, transform 0.8s ease;
+    }
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- CURSOR -->
+  <div id="cursor"></div>
+  <div id="cursor-ring"></div>
+
+  <!-- NAV -->
+  <nav id="navbar">
+    <div class="logo">Nexus</div>
+    <ul class="nav-links">
+      <li><a href="#products">Products</a></li>
+      <li><a href="#features">Features</a></li>
+      <li><a href="#reviews">Reviews</a></li>
+    </ul>
+    <button class="nav-cta">Get Access</button>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero" id="hero">
+    <div class="hero-glow" id="heroGlow"></div>
+    <p class="hero-line">Elite Game Modification Tools</p>
+    <h1 class="hero-title">
+      Dominate<br><em>Every Lobby</em>
+    </h1>
+    <p class="hero-sub">
+      Premium externals and modding tools built by coders, for coders.
+      Undetected. Precise. Unstoppable.
+    </p>
+    <div class="hero-btns">
+      <button class="btn-primary">Browse Tools</button>
+      <button class="btn-ghost">View Discord</button>
+    </div>
+    <div class="hero-scroll">
+      <div class="scroll-line"></div>
+      <span>Scroll</span>
+    </div>
+  </section>
+
+  <!-- TICKER -->
+  <div class="ticker">
+    <div class="ticker-inner">
+      <span class="ticker-item">Undetected</span><span class="ticker-dot">✦</span>
+      <span class="ticker-item">Always Updated</span><span class="ticker-dot">✦</span>
+      <span class="ticker-item">Premium Support</span><span class="ticker-dot">✦</span>
+      <span class="ticker-item">Instant Delivery</span><span class="ticker-dot">✦</span>
+      <span class="ticker-item">Trusted by 12K+ Users</span><span class="ticker-dot">✦</span>
+      <span class="ticker-item">External Only</span><span class="ticker-dot">✦</span>
+      <span class="ticker-item">Undetected</span><span class="ticker-dot">✦</span>
+      <span class="ticker-item">Always Updated</span><span class="ticker-dot">✦</span>
+      <span class="ticker-item">Premium Support</span><span class="ticker-dot">✦</span>
+      <span class="ticker-item">Instant Delivery</span><span class="ticker-dot">✦</span>
+      <span class="ticker-item">Trusted by 12K+ Users</span><span class="ticker-dot">✦</span>
+      <span class="ticker-item">External Only</span><span class="ticker-dot">✦</span>
+    </div>
+  </div>
+
+  <!-- STATS -->
+  <div class="stats reveal">
+    <div class="stat">
+      <span class="stat-num">12K+</span>
+      <span class="stat-label">Active Users</span>
+    </div>
+    <div class="stat">
+      <span class="stat-num">99.8%</span>
+      <span class="stat-label">Uptime</span>
+    </div>
+    <div class="stat">
+      <span class="stat-num">0</span>
+      <span class="stat-label">Detected Bans</span>
+    </div>
+    <div class="stat">
+      <span class="stat-num">24/7</span>
+      <span class="stat-label">Live Support</span>
+    </div>
+  </div>
+
+  <!-- PRODUCTS -->
+  <section class="products" id="products">
+    <div class="section-header reveal">
+      <span class="section-tag">Our Arsenal</span>
+      <h2 class="section-title">Choose Your<br><em>Weapon</em></h2>
+    </div>
+    <div class="products-grid reveal">
+
+      <!-- FEATURED -->
+      <div class="product-card featured">
+        <span class="product-badge">⚡ Most Popular</span>
+        <h3 class="product-name">Phantom Suite</h3>
+        <p class="product-game">Warzone · Fortnite · Apex</p>
+        <p class="product-desc">
+          Our flagship all-in-one external. Full ESP, aimbot, radar hack, and
+          item filter — all injected externally so your process stays clean.
+          Updated within hours of every game patch.
+        </p>
+        <ul class="product-features">
+          <li>Full bone ESP with distance rendering</li>
+          <li>Smooth aimbot with FOV + speed control</li>
+          <li>2D / 3D radar overlay</li>
+          <li>Loot & item ESP with rarity filter</li>
+          <li>No-recoil & spread correction</li>
+          <li>Stream-proof mode included</li>
+        </ul>
+        <div class="product-footer">
+          <div class="product-price">
+            $29<span>/mo</span>
+            <small>or $199 lifetime</small>
+          </div>
+          <button class="btn-card">Get Access →</button>
+        </div>
+      </div>
+
+      <!-- CARD 2 -->
+      <div class="product-card">
+        <span class="product-badge">New</span>
+        <h3 class="product-name">Specter Lite</h3>
+        <p class="product-game">Fortnite · Warzone</p>
+        <p class="product-desc">
+          Entry-level external for coders learning the craft. ESP-only, clean
+          codebase you can read and mod.
+        </p>
+        <ul class="product-features">
+          <li>Player & vehicle ESP</li>
+          <li>Health bar rendering</li>
+          <li>Commented source available</li>
+        </ul>
+        <div class="product-footer">
+          <div class="product-price">
+            $9<span>/mo</span>
+          </div>
+          <button class="btn-card">Buy →</button>
+        </div>
+      </div>
+
+      <!-- CARD 3 -->
+      <div class="product-card">
+        <span class="product-badge">Pro</span>
+        <h3 class="product-name">Eclipse Radar</h3>
+        <p class="product-game">All Supported Titles</p>
+        <p class="product-desc">
+          Standalone radar tool. Runs on a second device via your local
+          network — completely invisible to anti-cheat.
+        </p>
+        <ul class="product-features">
+          <li>Second-screen radar display</li>
+          <li>Enemy, loot & zone tracking</li>
+          <li>Zero game process interaction</li>
+        </ul>
+        <div class="product-footer">
+          <div class="product-price">
+            $19<span>/mo</span>
+          </div>
+          <button class="btn-card">Buy →</button>
+        </div>
+      </div>
+
+      <!-- CARD 4 -->
+      <div class="product-card">
+        <span class="product-badge">Source</span>
+        <h3 class="product-name">Dev Kit</h3>
+        <p class="product-game">Learn to Build</p>
+        <p class="product-desc">
+          Full annotated source code for a working external. Perfect for
+          coders who want to learn how it's done from scratch.
+        </p>
+        <ul class="product-features">
+          <li>Full C++ annotated source</li>
+          <li>Memory reading templates</li>
+          <li>Discord access to dev team</li>
+        </ul>
+        <div class="product-footer">
+          <div class="product-price">
+            $49<span> once</span>
+          </div>
+          <button class="btn-card">Buy →</button>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- FEATURES -->
+  <section class="features" id="features">
+    <div class="section-header reveal">
+      <span class="section-tag">Why Nexus</span>
+      <h2 class="section-title">Built Different,<br><em>Stays Undetected</em></h2>
+    </div>
+    <div class="features-grid">
+      <div class="reveal">
+        <span class="feature-icon">🛡️</span>
+        <h3 class="feature-name">External Only</h3>
+        <p class="feature-desc">
+          We never inject into the game process. All tools read memory from
+          outside, making detection near-impossible by standard kernel-level anti-cheat.
+        </p>
+      </div>
+      <div class="reveal">
+        <span class="feature-icon">⚡</span>
+        <h3 class="feature-name">Patch-Day Ready</h3>
+        <p class="feature-desc">
+          Our dev team monitors every game update. Offsets and features are
+          updated within hours — often before you even notice the patch dropped.
+        </p>
+      </div>
+      <div class="reveal">
+        <span class="feature-icon">🔐</span>
+        <h3 class="feature-name">HWID Locked</h3>
+        <p class="feature-desc">
+          Every license is locked to your hardware ID. No sharing, no leaks —
+          protecting both your investment and keeping the tool exclusive.
+        </p>
+      </div>
+      <div class="reveal">
+        <span class="feature-icon">💬</span>
+        <h3 class="feature-name">24/7 Discord</h3>
+        <p class="feature-desc">
+          Private Discord with round-the-clock support from our team and
+          community of 12,000+ users. Setup help, troubleshooting, updates.
+        </p>
+      </div>
+      <div class="reveal">
+        <span class="feature-icon">🧠</span>
+        <h3 class="feature-name">Dev-Friendly</h3>
+        <p class="feature-desc">
+          All tools include clean, readable code examples. Learn how externals
+          work while you use them. Great for aspiring game hackers and coders.
+        </p>
+      </div>
+      <div class="reveal">
+        <span class="feature-icon">🚀</span>
+        <h3 class="feature-name">Instant Delivery</h3>
+        <p class="feature-desc">
+          Payment confirmed → loader in your inbox in under 60 seconds.
+          Automated delivery means no waiting, no middleman, no delays.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- TESTIMONIALS -->
+  <section class="testimonials" id="reviews">
+    <div class="section-header reveal">
+      <span class="section-tag">Community</span>
+      <h2 class="section-title">Trusted by<br><em>Thousands</em></h2>
+    </div>
+    <div class="testi-grid reveal">
+      <div class="testi-card">
+        <div class="testi-stars">★★★★★</div>
+        <p class="testi-text">"Phantom Suite is insane. Been running it for 6 months, not a single issue. Worth every penny."</p>
+        <span class="testi-author">— kr4tos, Warzone</span>
+      </div>
+      <div class="testi-card">
+        <div class="testi-stars">★★★★★</div>
+        <p class="testi-text">"The Dev Kit taught me more about memory reading in a week than a year of YouTube tutorials."</p>
+        <span class="testi-author">— 0xVoid, Developer</span>
+      </div>
+      <div class="testi-card">
+        <div class="testi-stars">★★★★★</div>
+        <p class="testi-text">"Eclipse radar on my second monitor is literally a superpower. Support team is also top tier."</p>
+        <span class="testi-author">— silent_px, Apex</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA BANNER -->
+  <section class="cta-banner reveal">
+    <h2>Ready to<br><em>Level Up?</em></h2>
+    <p>Join 12,000+ players already running Nexus. Setup takes under 5 minutes.</p>
+    <button class="btn-primary">Get Access Now</button>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-logo">Nexus</div>
+    <div class="footer-links">
+      <a href="#">Terms</a>
+      <a href="#">Discord</a>
+      <a href="#">Status</a>
+      <a href="#">Contact</a>
+    </div>
+    <span class="footer-copy">© 2025 Nexus Tools. All rights reserved.</span>
+  </footer>
+
+  <script>
+    // ── CURSOR ──
+    const cursor = document.getElementById('cursor');
+    const ring   = document.getElementById('cursor-ring');
+    let mx = 0, my = 0, rx = 0, ry = 0;
+
+    document.addEventListener('mousemove', e => {
+      mx = e.clientX; my = e.clientY;
+      cursor.style.left = mx + 'px';
+      cursor.style.top  = my + 'px';
+    });
+
+    function animateRing() {
+      rx += (mx - rx) * 0.12;
+      ry += (my - ry) * 0.12;
+      ring.style.left = rx + 'px';
+      ring.style.top  = ry + 'px';
+      requestAnimationFrame(animateRing);
+    }
+    animateRing();
+
+    // ── HERO GLOW FOLLOWS MOUSE ──
+    const glow = document.getElementById('heroGlow');
+    const hero = document.getElementById('hero');
+    hero.addEventListener('mousemove', e => {
+      const rect = hero.getBoundingClientRect();
+      const x = e.clientX - rect.left - 300;
+      const y = e.clientY - rect.top  - 300;
+      glow.style.transform = `translate(${x}px, ${y}px)`;
+    });
+
+    // ── NAVBAR SCROLL ──
+    const navbar = document.getElementById('navbar');
+    window.addEventListener('scroll', () => {
+      navbar.classList.toggle('scrolled', window.scrollY > 60);
+    });
+
+    // ── SCROLL REVEAL ──
+    const reveals = document.querySelectorAll('.reveal');
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          e.target.classList.add('visible');
+          observer.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.1 });
+    reveals.forEach(r => observer.observe(r));
+  </script>
+</body>
 </html>
