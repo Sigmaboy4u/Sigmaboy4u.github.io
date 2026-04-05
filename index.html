@@ -3,17 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>iClock v2 | The Gold Standard of Externals</title>
+    <title>iClock v2 | Undetectable External SaaS</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg: #030305;
-            --surface: #0c0c0e;
-            --surface-light: #16161a;
+            --bg: #010101;
+            --surface: #0a0a0c;
             --accent: #00d2ff;
             --accent-glow: rgba(0, 210, 255, 0.4);
-            --text: #ffffff;
-            --text-dim: #94949e;
+            --text-high: #fbfbfd;
+            --text-med: #94949e;
+            --text-low: #4a4a52;
             --border: rgba(255, 255, 255, 0.08);
             --ease: cubic-bezier(0.16, 1, 0.3, 1);
         }
@@ -22,7 +22,7 @@
         html { scroll-behavior: smooth; }
         body {
             background-color: var(--bg);
-            color: var(--text);
+            color: var(--text-high);
             font-family: 'Plus Jakarta Sans', sans-serif;
             overflow-x: hidden;
             line-height: 1.6;
@@ -41,14 +41,11 @@
         }
 
         /* --- Background Animation --- */
-        #hero-canvas { position: fixed; top: 0; left: 0; z-index: -1; opacity: 0.5; }
+        #canvas { position: fixed; top: 0; left: 0; z-index: -1; opacity: 0.4; }
 
-        .container { max-width: 1300px; margin: 0 auto; padding: 0 30px; }
-        
-        /* --- Typography --- */
-        h1, h2, h3 { font-weight: 800; letter-spacing: -2px; }
+        .container { max-width: 1400px; margin: 0 auto; padding: 0 40px; }
         .gradient-text {
-            background: linear-gradient(to right, #fff, var(--accent));
+            background: linear-gradient(135deg, #fff 0%, var(--accent) 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
@@ -57,77 +54,19 @@
         nav {
             position: fixed; top: 0; width: 100%; height: 90px;
             display: flex; align-items: center; z-index: 999;
-            background: rgba(3, 3, 5, 0.7); backdrop-filter: blur(20px);
+            background: rgba(1, 1, 1, 0.7); backdrop-filter: blur(20px);
             border-bottom: 1px solid var(--border);
         }
         .nav-inner { display: flex; justify-content: space-between; align-items: center; width: 100%; }
+        .logo { font-weight: 800; font-size: 1.5rem; letter-spacing: -2px; }
+        .logo span { color: var(--accent); }
         .nav-links { display: flex; gap: 40px; align-items: center; }
-        .nav-links a { color: var(--text-dim); text-decoration: none; font-size: 0.9rem; font-weight: 600; transition: 0.3s; }
+        .nav-links a { color: var(--text-med); text-decoration: none; font-size: 0.9rem; font-weight: 600; transition: 0.3s; }
         .nav-links a:hover { color: var(--accent); }
-
-        /* --- Hero Section --- */
-        .hero { height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; }
-        .hero h1 { font-size: clamp(3.5rem, 9vw, 7.5rem); line-height: 0.85; margin-bottom: 30px; }
-        .hero p { color: var(--text-dim); font-size: 1.3rem; max-width: 750px; margin-bottom: 45px; }
-
-        /* --- NEW: The External UI Preview Window --- */
-        .preview-window {
-            width: 100%; max-width: 900px; height: 500px;
-            background: #000; border: 1.5px solid var(--border);
-            border-radius: 20px; position: relative; overflow: hidden;
-            box-shadow: 0 50px 100px rgba(0,0,0,0.5);
-            margin: 60px auto; transform: perspective(1000px) rotateX(5deg);
-            transition: 0.5s var(--ease);
-        }
-        .preview-window:hover { transform: perspective(1000px) rotateX(0deg) scale(1.02); border-color: var(--accent); }
-        
-        .ui-sidebar {
-            width: 180px; height: 100%; background: #0a0a0c;
-            border-right: 1px solid var(--border); padding: 30px 20px;
-            display: flex; flex-direction: column; gap: 20px;
-        }
-        .ui-nav-item { width: 100%; height: 35px; background: var(--surface-light); border-radius: 6px; }
-        .ui-nav-item.active { background: var(--accent-glow); border: 1px solid var(--accent); }
-
-        .ui-main { flex: 1; padding: 40px; display: grid; grid-template-columns: 1fr 1fr; gap: 20px; text-align: left; }
-        .ui-toggle {
-            height: 50px; background: #111; border: 1px solid var(--border);
-            border-radius: 10px; display: flex; align-items: center; padding: 0 15px;
-            justify-content: space-between; font-family: 'JetBrains Mono'; font-size: 0.7rem;
-        }
-        .ui-switch { width: 30px; height: 15px; background: var(--accent); border-radius: 10px; }
-
-        /* --- Feature Gallery --- */
-        .feature-showcase { padding: 120px 0; }
-        .feature-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 40px; margin-top: 80px; }
-        
-        .feature-img-card {
-            background: var(--surface); border-radius: 25px; overflow: hidden;
-            border: 1px solid var(--border); transition: 0.4s var(--ease);
-        }
-        .feature-img-card:hover { border-color: var(--accent); transform: translateY(-10px); }
-        .thumb-placeholder {
-            width: 100%; height: 280px; background-size: cover; background-position: center;
-            border-bottom: 1px solid var(--border);
-            display: flex; align-items: center; justify-content: center;
-            font-family: 'JetBrains Mono'; color: var(--accent);
-        }
-        .feature-info { padding: 35px; }
-        .feature-info h3 { font-size: 1.8rem; margin-bottom: 15px; }
-        .feature-info p { color: var(--text-dim); }
-
-        /* --- Status Section --- */
-        .live-stats {
-            display: flex; justify-content: space-around; padding: 60px;
-            background: var(--surface); border: 1px solid var(--border);
-            border-radius: 30px; margin-top: -100px; position: relative; z-index: 10;
-        }
-        .stat-box h2 { font-size: 3rem; color: var(--accent); }
-        .stat-box p { color: var(--text-dim); text-transform: uppercase; letter-spacing: 2px; font-size: 0.8rem; }
 
         /* --- Buttons --- */
         .btn {
-            padding: 18px 45px; border-radius: 14px; font-weight: 700;
+            padding: 16px 40px; border-radius: 12px; font-weight: 700;
             text-decoration: none; display: inline-flex; align-items: center; gap: 10px;
             transition: 0.3s; border: none; font-family: inherit;
         }
@@ -137,17 +76,90 @@
         }
         .btn-glow:hover { transform: translateY(-5px) scale(1.02); box-shadow: 0 0 50px var(--accent-glow); }
 
+        /* --- Hero --- */
+        .hero { height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; }
+        .status-pill {
+            background: rgba(0, 210, 255, 0.1); color: var(--accent);
+            padding: 8px 20px; border-radius: 100px; font-family: 'JetBrains Mono';
+            font-size: 0.8rem; margin-bottom: 30px; border: 1px solid var(--accent);
+        }
+        .hero h1 { font-size: clamp(3.5rem, 9vw, 7.5rem); font-weight: 800; line-height: 0.85; margin-bottom: 30px; }
+        .hero p { color: var(--text-med); font-size: 1.3rem; max-width: 800px; margin-bottom: 45px; }
+
+        /* --- SHOWCASE PREVIEW (Main Attraction) --- */
+        .showcase-wrapper { padding: 100px 0; border-bottom: 1px solid var(--border); }
+        
+        .monolith-window {
+            width: 100%; max-width: 1000px; height: 550px;
+            background: #000; border: 1.5px solid var(--border);
+            border-radius: 20px; position: relative; overflow: hidden;
+            box-shadow: 0 50px 100px rgba(0,0,0,0.5);
+            margin: 0 auto; transition: 0.5s var(--ease);
+            display: flex;
+        }
+        .monolith-window:hover { transform: translateY(-10px) scale(1.01); border-color: var(--accent); }
+        
+        /* The UI Core from image_0.png */
+        .ui-sidebar {
+            width: 220px; height: 100%; background: #0a0a0c;
+            border-right: 1px solid var(--border); padding: 40px 25px;
+            display: flex; flex-direction: column; gap: 20px;
+        }
+        .ui-nav-item { width: 100%; height: 35px; background: #16161a; border-radius: 8px; }
+        .ui-nav-item.active { background: var(--accent-glow); border: 1px solid var(--accent); }
+
+        .ui-main { flex: 1; padding: 50px; display: grid; grid-template-columns: 1fr 1fr; gap: 20px; text-align: left; }
+        
+        .ui-toggle {
+            height: 55px; background: #111; border: 1px solid var(--border);
+            border-radius: 10px; display: flex; align-items: center; padding: 0 20px;
+            justify-content: space-between; font-family: 'JetBrains Mono'; font-size: 0.75rem;
+            position: relative;
+        }
+        .ui-toggle.inactive { color: #555; border-color: #222; }
+        .ui-toggle.inactive .ui-switch { background: #333; }
+
+        .ui-switch { width: 35px; height: 18px; background: var(--accent); border-radius: 10px; }
+        .target-reticle {
+            position: absolute; top: 15px; left: 160px; width: 10px; height: 10px;
+            border: 2px solid var(--accent); border-radius: 50%;
+        }
+
+        /* Animated scanlines across the whole UI */
+        .scanlines {
+            position: absolute; top:0; left:0; width: 100%; height: 100%; pointer-events: none;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%),
+                        linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+            background-size: 100% 2px, 3px 100%;
+        }
+
+        /* Live Tracker Section */
+        .ui-tracker {
+            grid-column: span 2; height: 120px; border: 1px dashed var(--border);
+            border-radius: 10px; background: rgba(255,255,255,0.01);
+            font-family: 'JetBrains Mono'; font-size: 0.7rem; color: var(--text-low);
+            padding: 20px; text-align: left; overflow: hidden;
+        }
+        .tracker-log { display: flex; justify-content: space-between; margin-bottom: 5px; }
+        .status-up { color: #00ff88; font-weight: bold; }
+
+        /* --- Status Section (The 2.4k stats) --- */
+        .live-stats { padding: 120px 0; background: var(--surface); border-bottom: 1px solid var(--border); }
+        .stat-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 40px; text-align: center; }
+        .stat-box h2 { font-size: 4rem; font-weight: 800; color: var(--accent); }
+        .stat-box p { color: var(--text-med); text-transform: uppercase; letter-spacing: 2px; font-size: 0.85rem; }
+
         /* --- Scroll Reveal --- */
         .reveal { opacity: 0; transform: translateY(50px); transition: 1s var(--ease); }
         .reveal.active { opacity: 1; transform: translateY(0); }
 
         /* --- Footer --- */
-        footer { padding: 100px 0; text-align: center; border-top: 1px solid var(--border); }
-        .footer-logo { font-size: 2rem; font-weight: 800; margin-bottom: 20px; display: block; text-decoration: none; color: #fff; }
+        footer { padding: 120px 0 60px; text-align: center; color: var(--text-low); font-size: 0.8rem; }
+        .footer-logo { font-size: 2rem; font-weight: 800; margin-bottom: 20px; text-decoration: none; color: #fff; }
 
         @media (max-width: 900px) {
-            .feature-grid { grid-template-columns: 1fr; }
-            .preview-window { display: none; }
+            .stat-grid { grid-template-columns: 1fr; }
+            .monolith-window { display: none; }
             .hero h1 { font-size: 4rem; }
             #cursor, #cursor-follower { display: none; }
             * { cursor: auto; }
@@ -156,17 +168,17 @@
 </head>
 <body>
 
-    <canvas id="hero-canvas"></canvas>
+    <canvas id="canvas"></canvas>
     <div id="cursor"></div>
     <div id="cursor-follower"></div>
 
     <nav>
         <div class="container nav-inner">
-            <a href="#" class="footer-logo" style="margin-bottom: 0; font-size: 1.4rem;">i<span>CLOCK</span></a>
+            <a href="#" class="logo">i<span>CLOCK</span>V2</a>
             <div class="nav-links">
-                <a href="#features">Showcase</a>
-                <a href="#preview">External UI</a>
+                <a href="#preview">Interface</a>
                 <a href="#pricing">Pricing</a>
+                <a href="https://discord.gg/iclock" target="_blank">Discord</a>
                 <a href="#" class="btn btn-glow" style="padding: 10px 25px; font-size: 0.85rem;">Login</a>
             </div>
         </div>
@@ -174,182 +186,101 @@
 
     <main>
         <section class="hero container">
-            <div style="background: rgba(0, 210, 255, 0.1); color: var(--accent); padding: 8px 20px; border-radius: 100px; font-family: 'JetBrains Mono'; font-size: 0.8rem; margin-bottom: 30px; border: 1px solid var(--accent);">
-                V2.04 | KERNEL-MODE DRIVER ACTIVE
-            </div>
-            <h1>The <span class="gradient-text">Apex</span> of <br>External Logic.</h1>
-            <p>Don't settle for risky injections. iClock v2 uses physical input emulation to provide a completely invisible experience on any anti-cheat.</p>
+            <div class="status-pill">● SECURE | KERNEL V.04 ACTIVE</div>
+            <h1>The <span class="gradient-text">Only</span> Choice.<br>Externally.</h1>
+            <p>Built for elite performance, refined for total stealth. iClock v2 uses full hardware emulation to provide a completely undetectable experience on any client.</p>
             <div style="display: flex; gap: 20px;">
-                <a href="#pricing" class="btn btn-glow">Purchase Access</a>
-                <a href="#features" class="btn" style="color: #fff; border: 1px solid var(--border);">See Features</a>
-            </div>
-
-            <div class="preview-window" id="preview">
-                <div style="display: flex; height: 100%;">
-                    <div class="ui-sidebar">
-                        <div class="ui-nav-item active"></div>
-                        <div class="ui-nav-item"></div>
-                        <div class="ui-nav-item"></div>
-                        <div class="ui-nav-item"></div>
-                        <div style="margin-top: auto; opacity: 0.2;" class="ui-nav-item"></div>
-                    </div>
-                    <div class="ui-main">
-                        <div class="ui-toggle"><span>Enable Aimbot</span> <div class="ui-switch"></div></div>
-                        <div class="ui-toggle"><span>Silent Aim</span> <div class="ui-switch" style="background: #333;"></div></div>
-                        <div class="ui-toggle"><span>Show Box ESP</span> <div class="ui-switch"></div></div>
-                        <div class="ui-toggle"><span>Show Skeletons</span> <div class="ui-switch"></div></div>
-                        <div class="ui-toggle"><span>Bypass OBS</span> <div class="ui-switch"></div></div>
-                        <div class="ui-toggle"><span>Stream Proof</span> <div class="ui-switch"></div></div>
-                        <div style="grid-column: span 2; height: 120px; border: 1px dashed var(--border); border-radius: 10px; display: flex; align-items: center; justify-content: center; color: var(--text-dim); font-size: 0.8rem;">
-                            Live Radar View [Simulated]
-                        </div>
-                    </div>
-                </div>
-                <div style="position: absolute; top:0; left:0; width: 100%; height: 100%; pointer-events: none; background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06)); background-size: 100% 2px, 3px 100%;"></div>
+                <a href="#preview" class="btn btn-glow trigger-buy">Buy Access</a>
+                <a href="https://discord.gg/iclock" target="_blank" class="btn" style="color: #fff; border: 1px solid var(--border);">Community</a>
             </div>
         </section>
 
-        <section class="container">
-            <div class="live-stats">
-                <div class="stat-box"><h2>2.4k</h2><p>Active Users</p></div>
-                <div class="stat-box"><h2>0</h2><p>Recent Bans</p></div>
-                <div class="stat-box"><h2>14ms</h2><p>Avg Latency</p></div>
+        <section id="preview" class="showcase-wrapper container reveal">
+            <div style="text-align: center; margin-bottom: 80px;">
+                <h2 style="font-size: 3rem;">Aether-Core Interface</h2>
+                <p style="color: var(--text-med);">Clean logic. External execution.</p>
+            </div>
+            
+            <div class="monolith-window">
+                <div class="ui-sidebar">
+                    <div class="ui-nav-item active"></div>
+                    <div class="ui-nav-item"></div>
+                    <div class="ui-nav-item"></div>
+                    <div class="ui-nav-item"></div>
+                    <div style="margin-top: auto; opacity: 0.2;" class="ui-nav-item"></div>
+                </div>
+                <div class="ui-main">
+                    <div class="ui-toggle">Enable Aimbot <div class="target-reticle"></div> <div class="ui-switch"></div></div>
+                    <div class="ui-toggle inactive">Silent Aim <div class="ui-switch"></div></div>
+                    <div class="ui-toggle">Show Box ESP <div class="ui-switch"></div></div>
+                    <div class="ui-toggle">Show Skeletons <div class="ui-switch"></div></div>
+                    <div class="ui-toggle">Bypass OBS <div class="ui-switch"></div></div>
+                    <div class="ui-toggle">Stream Proof <div class="ui-switch"></div></div>
+                    
+                    <div class="ui-tracker">
+                        <div class="tracker-log"><span>[v.04.1] OFFSET DB SYNC...</span> <span class="status-up">OK</span></div>
+                        <div class="tracker-log"><span>[SYS] OBfuscation Engine...</span> <span class="status-up">ACTIVE</span></div>
+                        <div class="tracker-log"><span>[IO] PHYS Emulator Core...</span> <span class="status-up">ENGAGED</span></div>
+                        <div style="color: var(--accent);">[SESSION] ID: 4429_Elite. Verified...</div>
+                    </div>
+                </div>
+                <div class="scanlines"></div>
             </div>
         </section>
 
-        <section id="features" class="feature-showcase container">
-            <div style="text-align: center; margin-bottom: 80px;" class="reveal">
-                <h2 style="font-size: 3.5rem;">Total Control.</h2>
-                <p style="color: var(--text-dim);">Detailed look at our feature modules.</p>
-            </div>
-
-            <div class="feature-grid">
-                <div class="feature-img-card reveal">
-                    <div class="thumb-placeholder" style="background-image: url('https://images.unsplash.com/photo-1614850523296-d8c1af93d400?auto=format&fit=crop&q=80&w=800');">
-                        <span style="background: rgba(0,0,0,0.8); padding: 10px 20px; border-radius: 5px;">VISUAL PREVIEW</span>
-                    </div>
-                    <div class="feature-info">
-                        <h3>Hyper-Visor ESP</h3>
-                        <p>Our ESP is rendered through a secondary transparent overlay that is completely invisible to game screen-captures and OBS. Stream with confidence.</p>
-                    </div>
-                </div>
-
-                <div class="feature-img-card reveal">
-                    <div class="thumb-placeholder" style="background-image: url('https://images.unsplash.com/photo-1635070041078-e363dbe005cb?auto=format&fit=crop&q=80&w=800');">
-                        <span style="background: rgba(0,0,0,0.8); padding: 10px 20px; border-radius: 5px;">ALGORITHM PREVIEW</span>
-                    </div>
-                    <div class="feature-info">
-                        <h3>Neural Smoothing</h3>
-                        <p>Moves the mouse using logarithmic curves that mimic the exact velocity of a pro player. No snapping, no shaking—just pure accuracy.</p>
-                    </div>
-                </div>
-
-                <div class="feature-img-card reveal">
-                    <div class="thumb-placeholder" style="background-image: url('https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&q=80&w=800');">
-                        <span style="background: rgba(0,0,0,0.8); padding: 10px 20px; border-radius: 5px;">SECURITY PREVIEW</span>
-                    </div>
-                    <div class="feature-info">
-                        <h3>Polymorphic Engine</h3>
-                        <p>Every download generates a unique signature. Our servers re-compile the code for every customer, making signature-based bans a thing of the past.</p>
-                    </div>
-                </div>
-
-                <div class="feature-img-card reveal">
-                    <div class="thumb-placeholder" style="background-image: url('https://images.unsplash.com/photo-1558494949-ef010cbdcc51?auto=format&fit=crop&q=80&w=800');">
-                        <span style="background: rgba(0,0,0,0.8); padding: 10px 20px; border-radius: 5px;">HARDWARE PREVIEW</span>
-                    </div>
-                    <div class="feature-info">
-                        <h3>HWID Spoofer</h3>
-                        <p>Built-in virtualization that masks your Disk, Baseboard, and GPU serials. Play safely even if you've been previously flagged.</p>
-                    </div>
+        <section class="live-stats reveal">
+            <div class="container">
+                <div class="stat-grid">
+                    <div class="stat-box"><h2>2.4k</h2><p>Active Users</p></div>
+                    <div class="stat-box"><h2>0</h2><p>Recent Bans</p></div>
+                    <div class="stat-box"><h2>14ms</h2><p>Avg Latency</p></div>
                 </div>
             </div>
         </section>
 
-        <section id="pricing" class="container reveal">
-            <div style="text-align: center; margin-bottom: 60px;">
-                <h2 style="font-size: 3rem;">Ready to Overclock?</h2>
-            </div>
-            <div class="feature-grid" style="grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));">
-                <div class="feature-info" style="background: var(--surface); border: 1px solid var(--border); border-radius: 30px; text-align: center; padding: 60px;">
-                    <p style="color: var(--accent); font-weight: 800; text-transform: uppercase;">Weekly Access</p>
-                    <h2 style="font-size: 4rem; margin: 20px 0;">$4.99</h2>
-                    <ul style="list-style: none; color: var(--text-dim); margin-bottom: 30px; line-height: 2.5;">
-                        <li>Core Aimbot System</li>
-                        <li>Standard ESP Overlay</li>
-                        <li>24/7 Discord Support</li>
-                    </ul>
-                    <a href="#" class="btn btn-glow" style="width: 100%; justify-content: center;">Purchase</a>
-                </div>
-
-                <div class="feature-info" style="background: var(--surface); border: 2px solid var(--accent); border-radius: 30px; text-align: center; padding: 60px; transform: scale(1.05); background: linear-gradient(180deg, #111 0%, #000 100%);">
-                    <p style="color: var(--accent); font-weight: 800; text-transform: uppercase;">Legacy Access</p>
-                    <h2 style="font-size: 4rem; margin: 20px 0;">$59.99</h2>
-                    <ul style="list-style: none; color: var(--text-dim); margin-bottom: 30px; line-height: 2.5;">
-                        <li>Lifetime Software License</li>
-                        <li>Private Developer Builds</li>
-                        <li>Exclusive Beta Access</li>
-                    </ul>
-                    <a href="#" class="btn btn-glow" style="width: 100%; justify-content: center;">Purchase</a>
-                </div>
-            </div>
-        </section>
     </main>
 
     <footer>
         <div class="container">
             <a href="#" class="footer-logo">iCLOCK<span>V2</span></a>
-            <p style="color: var(--text-dim); max-width: 500px; margin: 0 auto 40px;">
-                The future of game enhancement is external. Undetectable by design, powerful by nature.
+            <p style="color: var(--text-low); max-width: 500px; margin: 0 auto 40px;">
+                The future of enhancement is external. Undetectable by design, powerful by nature.
             </p>
-            <div style="display: flex; justify-content: center; gap: 30px; margin-bottom: 40px;">
-                <a href="#" style="color: var(--text-dim); text-decoration: none;">Discord</a>
-                <a href="#" style="color: var(--text-dim); text-decoration: none;">Terms</a>
-                <a href="#" style="color: var(--text-dim); text-decoration: none;">Status</a>
-            </div>
-            <p style="color: #333; font-size: 0.75rem;">&copy; 2026 iClock Software Systems. All Rights Reserved.</p>
+            <p>&copy; 2026 iClock Systems. Global License. educational use only.</p>
         </div>
     </footer>
 
     <script>
-        // --- 1. Particles Canvas ---
-        const canvas = document.getElementById('hero-canvas');
+        // --- 1. Cyber-Grid Canvas (distortion on mouse move) ---
+        const canvas = document.getElementById('canvas');
         const ctx = canvas.getContext('2d');
-        let particles = [];
+        let mouseX = 0, mouseY = 0;
 
-        function initCanvas() {
+        function init() {
             canvas.width = window.innerWidth;
             canvas.height = window.innerHeight;
-            particles = [];
-            for (let i = 0; i < 80; i++) {
-                particles.push({
-                    x: Math.random() * canvas.width,
-                    y: Math.random() * canvas.height,
-                    size: Math.random() * 2,
-                    speedX: (Math.random() - 0.5) * 0.5,
-                    speedY: (Math.random() - 0.5) * 0.5
-                });
-            }
         }
 
-        function animate() {
+        function drawGrid() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
-            particles.forEach(p => {
-                p.x += p.speedX; p.y += p.speedY;
-                if (p.x < 0 || p.x > canvas.width) p.speedX *= -1;
-                if (p.y < 0 || p.y > canvas.height) p.speedY *= -1;
-                ctx.fillStyle = 'rgba(0, 210, 255, 0.2)';
-                ctx.beginPath();
-                ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
-                ctx.fill();
-            });
-            requestAnimationFrame(animate);
+            ctx.strokeStyle = '#00d2ff';
+            ctx.lineWidth = 0.2;
+            const size = 50; // grid size
+            for(let x = 0; x < canvas.width; x += size) {
+                for(let y = 0; y < canvas.height; y += size) {
+                    let dist = Math.hypot(x - mouseX, y - mouseY);
+                    let distortion = Math.max(0, 15 - dist/15);
+                    ctx.strokeRect(x - distortion, y - distortion, size + distortion*2, size + distortion*2);
+                }
+            }
+            requestAnimationFrame(drawGrid);
         }
 
-        // --- 2. Cursor Follower ---
+        // --- 2. Custom Cursor Follower ---
         const cursor = document.getElementById('cursor');
         const follower = document.getElementById('cursor-follower');
         document.addEventListener('mousemove', (e) => {
+            mouseX = e.clientX; mouseY = e.clientY;
             cursor.style.transform = `translate(${e.clientX}px, ${e.clientY}px)`;
             follower.style.transform = `translate(${e.clientX - 20}px, ${e.clientY - 20}px)`;
         });
@@ -359,13 +290,13 @@
             const reveals = document.querySelectorAll('.reveal');
             reveals.forEach(el => {
                 const top = el.getBoundingClientRect().top;
-                if (top < window.innerHeight - 100) el.classList.add('active');
+                if(top < window.innerHeight - 100) el.classList.add('active');
             });
         }
 
         window.onscroll = reveal;
-        window.onresize = initCanvas;
-        initCanvas(); animate(); reveal();
+        window.onresize = init;
+        init(); drawGrid(); reveal();
     </script>
 </body>
 </html>
