@@ -9,12 +9,13 @@
     <style>
         :root {
             --bg-deep: #050208;
-            --bg-surface: #0f0a17;
+            --bg-surface: #0a0a0c;
+            --accent-cyan: #00f2ff; /* Matching your image accent */
             --accent-purple: #9d4eff;
             --accent-glow: rgba(157, 78, 255, 0.3);
             --text-main: #fbfbfd;
             --text-dim: #9994b0;
-            --border-thin: rgba(157, 78, 255, 0.12);
+            --border-thin: rgba(255, 255, 255, 0.06);
             --transition-smooth: cubic-bezier(0.16, 1, 0.3, 1);
         }
 
@@ -24,82 +25,60 @@
             color: var(--text-main);
             font-family: 'Plus Jakarta Sans', sans-serif;
             overflow-x: hidden;
-            line-height: 1.6;
         }
 
-        #bg-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; opacity: 0.6; pointer-events: none; }
-        #cursor-dot { width: 6px; height: 6px; background: var(--accent-purple); border-radius: 50%; position: fixed; pointer-events: none; z-index: 9999; box-shadow: 0 0 15px var(--accent-purple); }
-        #cursor-ring { width: 34px; height: 34px; border: 1.5px solid var(--accent-purple); border-radius: 50%; position: fixed; pointer-events: none; z-index: 9998; transition: transform 0.1s var(--transition-smooth); opacity: 0.4; }
+        /* --- Animated Purple Vibe Background --- */
+        #bg-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; opacity: 0.5; pointer-events: none; }
+        
+        /* --- Interactive Cursor --- */
+        #cursor-dot { width: 6px; height: 6px; background: var(--accent-cyan); border-radius: 50%; position: fixed; pointer-events: none; z-index: 9999; box-shadow: 0 0 15px var(--accent-cyan); }
+        #cursor-ring { width: 34px; height: 34px; border: 1.5px solid var(--accent-cyan); border-radius: 50%; position: fixed; pointer-events: none; z-index: 9998; transition: transform 0.1s var(--transition-smooth); opacity: 0.4; }
 
         .container { max-width: 1100px; margin: 0 auto; padding: 0 25px; }
 
         /* --- Navigation --- */
-        nav {
-            height: 90px; border-bottom: 1px solid var(--border-thin);
-            display: flex; align-items: center; position: sticky; top: 0;
-            background: rgba(5, 2, 8, 0.85); backdrop-filter: blur(20px); z-index: 100;
-        }
+        nav { height: 90px; border-bottom: 1px solid var(--border-thin); display: flex; align-items: center; position: sticky; top: 0; background: rgba(5, 2, 8, 0.85); backdrop-filter: blur(20px); z-index: 100; }
         .nav-content { display: flex; justify-content: space-between; align-items: center; width: 100%; }
-        .logo { font-weight: 800; font-size: 1.4rem; color: #fff; text-decoration: none; letter-spacing: -1px; }
-        .logo span { color: var(--accent-purple); text-shadow: 0 0 15px var(--accent-glow); }
+        .logo { font-weight: 800; font-size: 1.4rem; color: #fff; text-decoration: none; }
+        .logo span { color: var(--accent-cyan); }
+
+        /* --- Hero Section (From Image 2) --- */
+        .hero { padding: 100px 0 60px; text-align: center; }
+        .status-badge { display: inline-flex; align-items: center; padding: 8px 20px; border: 1px solid var(--accent-cyan); border-radius: 100px; font-family: 'JetBrains Mono'; font-size: 0.7rem; color: var(--accent-cyan); margin-bottom: 30px; }
+        .hero h1 { font-size: clamp(3rem, 7vw, 5.5rem); font-weight: 800; line-height: 1; letter-spacing: -3px; margin-bottom: 25px; }
+        .hero h1 span { color: var(--accent-cyan); }
+        .hero p { color: var(--text-dim); font-size: 1.1rem; max-width: 700px; margin: 0 auto 40px; }
+
+        .btn-group { display: flex; gap: 15px; justify-content: center; }
+        .primary-btn { padding: 18px 40px; background: var(--accent-cyan); color: #000; border-radius: 12px; font-weight: 800; text-decoration: none; box-shadow: 0 0 30px rgba(0, 242, 255, 0.3); }
+        .secondary-btn { padding: 18px 40px; background: #111; color: #fff; border-radius: 12px; font-weight: 800; text-decoration: none; border: 1px solid var(--border-thin); }
+
+        /* --- UI Showcase (From Image 1) --- */
+        .ui-showcase { margin-top: 80px; padding: 40px; border: 1px solid var(--accent-cyan); border-radius: 20px; background: rgba(10, 10, 12, 0.6); position: relative; }
+        .ui-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; }
+        .ui-item { background: #16161a; padding: 25px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; font-family: 'JetBrains Mono'; font-size: 0.8rem; }
+        .toggle { width: 40px; height: 20px; background: var(--accent-cyan); border-radius: 20px; position: relative; }
+
+        /* --- Stats Bar (From Image 1) --- */
+        .stats-bar { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-top: 40px; text-align: center; padding: 60px 0; background: #0a0a0c; border-radius: 24px; border: 1px solid var(--border-thin); }
+        .stat-val { font-size: 3.5rem; font-weight: 800; color: var(--accent-cyan); display: block; }
+        .stat-label { font-size: 0.8rem; color: var(--text-dim); letter-spacing: 2px; }
+
+        /* --- eCommerce Flow Modals --- */
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 1000; display: none; align-items: center; justify-content: center; backdrop-filter: blur(10px); }
+        .modal-content { background: #0f0a17; border: 1px solid var(--accent-purple); padding: 40px; border-radius: 24px; width: 400px; text-align: center; }
+        .input-style { width: 100%; padding: 15px; margin-bottom: 15px; background: #16161a; border: 1px solid var(--border-thin); color: #fff; border-radius: 8px; }
         
-        .cart-status { position: relative; color: var(--accent-purple); font-weight: 800; font-family: 'JetBrains Mono'; font-size: 0.8rem; cursor: pointer; }
-
-        /* --- Hero --- */
-        .hero { padding: 120px 0 80px; text-align: center; }
-        .status-badge {
-            display: inline-flex; align-items: center; padding: 8px 20px;
-            background: rgba(157, 78, 255, 0.05); border: 1px solid var(--accent-purple);
-            border-radius: 100px; font-family: 'JetBrains Mono', monospace;
-            font-size: 0.75rem; color: var(--accent-purple); margin-bottom: 30px;
-        }
-        .hero h1 { font-size: clamp(3rem, 7vw, 5.5rem); font-weight: 800; line-height: 0.95; letter-spacing: -3px; margin-bottom: 25px; }
-
-        /* --- Pricing & Tiers --- */
-        .pricing-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin: 60px 0; }
-        .tier-card {
-            background: var(--bg-surface); border: 1px solid var(--border-thin);
-            padding: 50px 30px; border-radius: 24px; text-align: center;
-            transition: 0.4s var(--transition-smooth);
-        }
-        .tier-card:hover { border-color: var(--accent-purple); transform: translateY(-5px); }
-        .price { font-size: 3.5rem; font-weight: 800; margin: 20px 0; }
-        .buy-btn {
-            display: block; width: 100%; padding: 16px; border-radius: 12px;
-            background: var(--accent-purple); color: #fff; text-align: center; font-weight: 800;
-            text-decoration: none; margin-top: 30px; transition: 0.3s; border: none; cursor: pointer;
-        }
-
-        /* --- UI MODALS (Sign Up / Cart) --- */
-        .modal-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.85); backdrop-filter: blur(10px);
-            z-index: 1000; display: none; align-items: center; justify-content: center;
-        }
-        .modal-content {
-            background: var(--bg-surface); border: 1px solid var(--accent-purple);
-            padding: 40px; border-radius: 24px; width: 100%; max-width: 450px;
-            box-shadow: 0 0 50px var(--accent-glow); position: relative;
-        }
-        .close-modal { position: absolute; top: 20px; right: 20px; cursor: pointer; color: var(--text-dim); }
-        
-        .form-group { margin-bottom: 20px; }
-        .form-group label { display: block; font-size: 0.8rem; color: var(--text-dim); margin-bottom: 8px; font-family: 'JetBrains Mono'; }
-        .form-group input { 
-            width: 100%; background: rgba(255,255,255,0.03); border: 1px solid var(--border-thin);
-            padding: 15px; border-radius: 8px; color: #fff; font-family: 'JetBrains Mono';
-        }
-
-        /* --- Cart Drawer --- */
-        #cart-drawer {
-            position: fixed; top: 0; right: -400px; width: 400px; height: 100%;
-            background: var(--bg-surface); border-left: 1px solid var(--border-thin);
-            z-index: 1001; transition: 0.5s var(--transition-smooth); padding: 40px;
-        }
+        #cart-drawer { position: fixed; top: 0; right: -400px; width: 400px; height: 100%; background: #0a0a0c; border-left: 1px solid var(--border-thin); z-index: 1001; transition: 0.4s; padding: 40px; }
         #cart-drawer.open { right: 0; }
-        .cart-item { padding: 20px 0; border-bottom: 1px solid var(--border-thin); display: flex; justify-content: space-between; }
 
-        @media (max-width: 900px) { .pricing-grid { grid-template-columns: 1fr; } #cursor-dot, #cursor-ring, #cart-drawer { display: none; } }
+        /* --- Pricing Section --- */
+        .pricing-section { padding: 100px 0; }
+        .pricing-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+        .price-card { background: #0a0a0c; padding: 40px; border-radius: 20px; border: 1px solid var(--border-thin); text-align: center; }
+        .price-card:hover { border-color: var(--accent-purple); }
+
+        @media (max-width: 900px) { .ui-grid, .pricing-grid, .stats-bar { grid-template-columns: 1fr; } #cursor-dot, #cursor-ring { display: none; } * { cursor: auto !important; } }
     </style>
 </head>
 <body>
@@ -110,183 +89,131 @@
 
     <div class="modal-overlay" id="signup-modal">
         <div class="modal-content">
-            <span class="close-modal" onclick="closeSignup()">[CLOSE]</span>
-            <h2 style="margin-bottom: 10px;">Create Account</h2>
-            <p style="color: var(--text-dim); font-size: 0.9rem; margin-bottom: 30px;">Required for license activation.</p>
-            <form onsubmit="handleSignup(event)">
-                <div class="form-group">
-                    <label>EMAIL ADDRESS</label>
-                    <input type="email" placeholder="user@example.com" required>
-                </div>
-                <div class="form-group">
-                    <label>PASSWORD</label>
-                    <input type="password" placeholder="••••••••" required>
-                </div>
-                <button type="submit" class="buy-btn">Complete Registration</button>
-            </form>
+            <h2 style="margin-bottom: 20px;">Register Account</h2>
+            <input type="email" placeholder="Email Address" class="input-style" id="reg-email">
+            <input type="password" placeholder="Password" class="input-style">
+            <button class="primary-btn" style="width: 100%; border: none; background: var(--accent-purple); color: white;" onclick="finishSignup()">Sign Up</button>
         </div>
     </div>
 
     <div id="cart-drawer">
-        <h2 style="margin-bottom: 30px;">Your Cart</h2>
-        <div id="cart-items-container">
-            <p style="color: var(--text-dim);">Your cart is empty.</p>
-        </div>
-        <div id="cart-footer" style="margin-top: 40px; display: none;">
-            <div style="display: flex; justify-content: space-between; font-weight: 800; margin-bottom: 20px;">
-                <span>TOTAL:</span>
-                <span id="cart-total">$0.00</span>
-            </div>
-            <button class="buy-btn" onclick="alert('Proceeding to ShoPay Integration...')">Checkout with Shopay</button>
-        </div>
-        <button class="buy-btn" style="background: transparent; color: var(--text-dim); margin-top: 10px;" onclick="toggleCart()">Continue Shopping</button>
+        <h2 style="margin-bottom: 20px;">Your Cart</h2>
+        <div id="cart-content">Empty</div>
+        <button class="primary-btn" style="width: 100%; margin-top: 30px; background: #9d4eff; color: white; border: none;" onclick="location.href='#'">Checkout with Shopay</button>
+        <p onclick="toggleCart()" style="margin-top: 20px; color: var(--text-dim); text-align: center;">Close</p>
     </div>
 
     <nav>
         <div class="container nav-content">
             <a href="#" class="logo">i<span>CLOCK</span></a>
-            <div class="cart-status" onclick="toggleCart()">
-                CART (<span id="cart-count">0</span>)
-            </div>
+            <div style="font-family: 'JetBrains Mono'; font-size: 0.8rem; color: var(--accent-cyan);" onclick="toggleCart()">CART (<span id="cart-count">0</span>)</div>
         </div>
     </nav>
 
     <header class="hero container">
-        <div class="status-badge">● KERNEL V.04 ACTIVE</div>
-        <h1>Dominate the <br><span style="color: var(--accent-purple);">Playing Field.</span></h1>
+        <div class="status-badge">● SECURE | KERNEL V.04 ACTIVE</div>
+        <h1>The New Standard of <br><span>Silent Dominance.</span></h1>
+        <p>iClock v2 bridges the gap between software and hardware. An external emulation framework engineered for undetectable performance on Roblox. No injection. Zero memory trace.</p>
+        <div class="btn-group">
+            <a href="#pricing" class="primary-btn">Purchase License</a>
+            <a href="https://discord.gg/9rTbwJsg" target="_blank" class="secondary-btn">Join Community</a>
+        </div>
+
+        <div class="ui-showcase">
+            <div class="ui-grid">
+                <div class="ui-item">Enable Aimbot <div class="toggle"></div></div>
+                <div class="ui-item">Silent Aim <div class="toggle" style="background: #333;"></div></div>
+                <div class="ui-item">Show Box ESP <div class="toggle"></div></div>
+                <div class="ui-item">Show Skeletons <div class="toggle"></div></div>
+                <div class="ui-item">Bypass OBS <div class="toggle"></div></div>
+                <div class="ui-item">Stream Proof <div class="toggle"></div></div>
+            </div>
+        </div>
+
+        <div class="stats-bar">
+            <div><span class="stat-val">2.4k</span><span class="stat-label">ACTIVE USERS</span></div>
+            <div><span class="stat-val">0</span><span class="stat-label">RECENT BANS</span></div>
+            <div><span class="stat-val">14ms</span><span class="stat-label">AVG LATENCY</span></div>
+        </div>
     </header>
 
-    <section id="pricing" class="container">
+    <section id="pricing" class="container pricing-section">
         <div class="pricing-grid">
-            <div class="tier-card">
-                <h3>Starter</h3>
-                <div class="price">$4.99 <span>/ wk</span></div>
-                <button class="buy-btn" onclick="attemptPurchase('Starter', 4.99)">Purchase Now</button>
+            <div class="price-card">
+                <h3>Weekly</h3>
+                <div style="font-size: 3rem; font-weight: 800; margin: 20px 0;">$4.99</div>
+                <button class="primary-btn" style="width: 100%; border: none;" onclick="buy('Weekly', 4.99)">Purchase Now</button>
             </div>
-            <div class="tier-card" style="border: 2px solid var(--accent-purple);">
-                <h3>Professional</h3>
-                <div class="price">$14.99 <span>/ mo</span></div>
-                <button class="buy-btn" onclick="attemptPurchase('Professional', 14.99)">Purchase Now</button>
+            <div class="price-card" style="border-color: var(--accent-cyan);">
+                <h3>Monthly</h3>
+                <div style="font-size: 3rem; font-weight: 800; margin: 20px 0;">$14.99</div>
+                <button class="primary-btn" style="width: 100%; border: none;" onclick="buy('Monthly', 14.99)">Purchase Now</button>
             </div>
-            <div class="tier-card">
-                <h3>Legacy</h3>
-                <div class="price">$49.99 <span>/ life</span></div>
-                <button class="buy-btn" onclick="attemptPurchase('Legacy', 49.99)">Purchase Now</button>
+            <div class="price-card">
+                <h3>Lifetime</h3>
+                <div style="font-size: 3rem; font-weight: 800; margin: 20px 0;">$49.99</div>
+                <button class="primary-btn" style="width: 100%; border: none;" onclick="buy('Lifetime', 49.99)">Purchase Now</button>
             </div>
         </div>
     </section>
 
-    <footer>
-        <p>&copy; 2026 iClock Systems. High-Performance Driver Research.</p>
-        <p style="margin-top: 10px; opacity: 0.5;">discord.gg/9rTbwJsg</p>
-    </footer>
-
     <script>
-        let isUserSignedUp = false;
-        let cart = [];
-        let pendingItem = null;
+        let signedUp = false;
+        let cartItems = 0;
 
-        // --- eCommerce Logic ---
-        function attemptPurchase(name, price) {
-            if (!isUserSignedUp) {
-                pendingItem = { name, price };
+        function buy(tier, price) {
+            if(!signedUp) {
                 document.getElementById('signup-modal').style.display = 'flex';
             } else {
-                addToCart(name, price);
+                cartItems++;
+                document.getElementById('cart-count').innerText = cartItems;
+                document.getElementById('cart-content').innerHTML = `<div style="padding: 20px; border: 1px solid #333;">${tier} Access - $${price}</div>`;
+                toggleCart(true);
             }
         }
 
-        function handleSignup(e) {
-            e.preventDefault();
-            isUserSignedUp = true;
-            closeSignup();
-            if (pendingItem) {
-                addToCart(pendingItem.name, pendingItem.price);
-                pendingItem = null;
-            }
+        function finishSignup() {
+            signedUp = true;
+            document.getElementById('signup-modal').style.display = 'none';
+            alert("Account Registered. You can now add to cart.");
         }
 
-        function addToCart(name, price) {
-            cart.push({ name, price });
-            updateCartUI();
-            toggleCart(true);
-        }
-
-        function updateCartUI() {
-            const container = document.getElementById('cart-items-container');
-            const totalEl = document.getElementById('cart-total');
-            const footer = document.getElementById('cart-footer');
-            const countEl = document.getElementById('cart-count');
-
-            countEl.innerText = cart.length;
-
-            if (cart.length === 0) {
-                container.innerHTML = '<p style="color: var(--text-dim);">Your cart is empty.</p>';
-                footer.style.display = 'none';
-            } else {
-                container.innerHTML = cart.map(item => `
-                    <div class="cart-item">
-                        <span>${item.name} License</span>
-                        <span>$${item.price}</span>
-                    </div>
-                `).join('');
-                
-                const total = cart.reduce((sum, item) => sum + item.price, 0);
-                totalEl.innerText = `$${total.toFixed(2)}`;
-                footer.style.display = 'block';
-            }
-        }
-
-        function toggleCart(forceOpen = false) {
+        function toggleCart(open = null) {
             const drawer = document.getElementById('cart-drawer');
-            if (forceOpen) drawer.classList.add('open');
+            if(open === true) drawer.classList.add('open');
             else drawer.classList.toggle('open');
         }
 
-        function closeSignup() { document.getElementById('signup-modal').style.display = 'none'; }
-
-        // --- Background Animation ---
+        // --- PURPLE PARTICLE VIBE ---
         const canvas = document.getElementById('bg-canvas');
         const ctx = canvas.getContext('2d');
-        let particles = [];
-
+        let pts = [];
         function init() {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-            particles = [];
-            for (let i = 0; i < 70; i++) {
-                particles.push({
-                    x: Math.random() * canvas.width,
-                    y: Math.random() * canvas.height,
-                    size: Math.random() * 2 + 1,
-                    speedX: Math.random() * 0.5 - 0.25,
-                    speedY: Math.random() * 0.5 - 0.25,
-                    opacity: Math.random() * 0.5
-                });
-            }
+            canvas.width = window.innerWidth; canvas.height = window.innerHeight;
+            pts = [];
+            for(let i=0; i<60; i++) pts.push({x:Math.random()*canvas.width, y:Math.random()*canvas.height, s:Math.random()*2, vx:Math.random()-0.5, vy:Math.random()-0.5});
         }
-
-        function animate() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            particles.forEach(p => {
-                p.x += p.speedX; p.y += p.speedY;
-                if (p.x > canvas.width) p.x = 0; if (p.y > canvas.height) p.y = 0;
-                ctx.fillStyle = `rgba(157, 78, 255, ${p.opacity})`;
-                ctx.beginPath(); ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2); ctx.fill();
+        function anim() {
+            ctx.clearRect(0,0,canvas.width,canvas.height);
+            ctx.fillStyle = 'rgba(157, 78, 255, 0.4)';
+            pts.forEach(p => {
+                p.x+=p.vx; p.y+=p.vy;
+                if(p.x<0 || p.x>canvas.width) p.vx*=-1;
+                if(p.y<0 || p.y>canvas.height) p.vy*=-1;
+                ctx.beginPath(); ctx.arc(p.x, p.y, p.s, 0, Math.PI*2); ctx.fill();
             });
-            requestAnimationFrame(animate);
+            requestAnimationFrame(anim);
         }
 
-        // --- Interactive Cursor ---
         const dot = document.getElementById('cursor-dot');
         const ring = document.getElementById('cursor-ring');
         document.addEventListener('mousemove', (e) => {
-            dot.style.left = `${e.clientX}px`; dot.style.top = `${e.clientY}px`;
+            dot.style.left = e.clientX+'px'; dot.style.top = e.clientY+'px';
             ring.style.transform = `translate(${e.clientX - 17}px, ${e.clientY - 17}px)`;
         });
 
         window.addEventListener('resize', init);
-        init(); animate();
+        init(); anim();
     </script>
 </body>
 </html>
