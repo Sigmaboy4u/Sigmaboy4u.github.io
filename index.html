@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>iClock v2 | Elite External Framework</title>
-    
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
     
     <style>
@@ -19,7 +18,6 @@
             --transition-smooth: cubic-bezier(0.16, 1, 0.3, 1);
         }
 
-        /* --- Core Setup --- */
         * { margin: 0; padding: 0; box-sizing: border-box; cursor: none; }
         body {
             background-color: var(--bg-deep);
@@ -29,13 +27,7 @@
             line-height: 1.6;
         }
 
-        /* --- Animated Background Canvas --- */
-        #bg-canvas {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            z-index: -1; opacity: 0.6; pointer-events: none;
-        }
-
-        /* --- Interactive Cursor --- */
+        #bg-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; opacity: 0.6; pointer-events: none; }
         #cursor-dot { width: 6px; height: 6px; background: var(--accent-purple); border-radius: 50%; position: fixed; pointer-events: none; z-index: 9999; box-shadow: 0 0 15px var(--accent-purple); }
         #cursor-ring { width: 34px; height: 34px; border: 1.5px solid var(--accent-purple); border-radius: 50%; position: fixed; pointer-events: none; z-index: 9998; transition: transform 0.1s var(--transition-smooth); opacity: 0.4; }
 
@@ -50,8 +42,8 @@
         .nav-content { display: flex; justify-content: space-between; align-items: center; width: 100%; }
         .logo { font-weight: 800; font-size: 1.4rem; color: #fff; text-decoration: none; letter-spacing: -1px; }
         .logo span { color: var(--accent-purple); text-shadow: 0 0 15px var(--accent-glow); }
-        .nav-links a { color: var(--text-dim); text-decoration: none; font-size: 0.9rem; font-weight: 600; margin-left: 35px; transition: 0.3s; }
-        .nav-links a:hover { color: var(--accent-purple); }
+        
+        .cart-status { position: relative; color: var(--accent-purple); font-weight: 800; font-family: 'JetBrains Mono'; font-size: 0.8rem; cursor: pointer; }
 
         /* --- Hero --- */
         .hero { padding: 120px 0 80px; text-align: center; }
@@ -60,69 +52,54 @@
             background: rgba(157, 78, 255, 0.05); border: 1px solid var(--accent-purple);
             border-radius: 100px; font-family: 'JetBrains Mono', monospace;
             font-size: 0.75rem; color: var(--accent-purple); margin-bottom: 30px;
-            box-shadow: 0 0 20px var(--accent-glow);
         }
         .hero h1 { font-size: clamp(3rem, 7vw, 5.5rem); font-weight: 800; line-height: 0.95; letter-spacing: -3px; margin-bottom: 25px; }
-        .hero p { color: var(--text-dim); font-size: 1.1rem; max-width: 650px; margin: 0 auto 40px; }
 
-        /* --- SECURITY SECTION (Is it a virus?) --- */
-        .security-section { padding: 80px 0; }
-        .security-card {
-            background: linear-gradient(145deg, var(--bg-surface), #1a1426);
-            border: 1px solid var(--border-thin); padding: 50px; border-radius: 24px;
-            display: grid; grid-template-columns: 1fr 1.5fr; gap: 40px; align-items: center;
-        }
-        .security-icon { font-size: 4rem; text-align: center; color: var(--accent-purple); }
-        .security-content h2 { margin-bottom: 15px; font-size: 2rem; }
-        .security-content p { color: var(--text-dim); font-size: 0.95rem; margin-bottom: 20px; }
-        .virus-pill { display: inline-block; padding: 5px 12px; background: rgba(0, 255, 136, 0.1); color: #00ff88; border-radius: 6px; font-weight: 700; font-size: 0.8rem; }
-
-        /* --- FEATURES SECTION --- */
-        .features { padding: 80px 0; }
-        .feature-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
-        .feature-box {
-            padding: 40px; background: var(--bg-surface); border: 1px solid var(--border-thin);
-            border-radius: 20px; transition: 0.3s;
-        }
-        .feature-box:hover { border-color: var(--accent-purple); transform: translateY(-5px); }
-        .feature-box h4 { color: var(--accent-purple); font-family: 'JetBrains Mono'; margin-bottom: 15px; font-size: 0.9rem; }
-
-        /* --- PRICING SECTION --- */
+        /* --- Pricing & Tiers --- */
         .pricing-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin: 60px 0; }
         .tier-card {
             background: var(--bg-surface); border: 1px solid var(--border-thin);
             padding: 50px 30px; border-radius: 24px; text-align: center;
-            transition: 0.4s var(--transition-smooth); position: relative;
+            transition: 0.4s var(--transition-smooth);
         }
-        .tier-card.featured { border: 2px solid var(--accent-purple); box-shadow: 0 0 40px var(--accent-glow); }
+        .tier-card:hover { border-color: var(--accent-purple); transform: translateY(-5px); }
         .price { font-size: 3.5rem; font-weight: 800; margin: 20px 0; }
-        .price span { font-size: 1rem; color: var(--text-dim); font-weight: 400; }
         .buy-btn {
             display: block; width: 100%; padding: 16px; border-radius: 12px;
-            background: #fff; color: #000; text-align: center; font-weight: 800;
-            text-decoration: none; margin-top: 30px; transition: 0.3s; border: none;
+            background: var(--accent-purple); color: #fff; text-align: center; font-weight: 800;
+            text-decoration: none; margin-top: 30px; transition: 0.3s; border: none; cursor: pointer;
         }
-        .buy-btn:hover { transform: scale(1.02); filter: brightness(0.9); }
-        .featured-btn { background: var(--accent-purple); color: #fff; }
 
-        /* --- FAQ SECTION --- */
-        .faq-container { max-width: 800px; margin: 80px auto; }
-        .faq-item { background: var(--bg-surface); border: 1px solid var(--border-thin); border-radius: 12px; margin-bottom: 10px; overflow: hidden; }
-        .faq-trigger { width: 100%; padding: 22px 30px; background: none; border: none; color: #fff; text-align: left; font-size: 1rem; font-weight: 600; display: flex; justify-content: space-between; cursor: pointer; }
-        .faq-content { max-height: 0; padding: 0 30px; color: var(--text-dim); overflow: hidden; transition: 0.4s var(--transition-smooth); }
-        .faq-item.active .faq-content { max-height: 200px; padding-bottom: 22px; }
-
-        /* --- Animations --- */
-        .reveal { opacity: 0; transform: translateY(30px); transition: 0.8s var(--transition-smooth); }
-        .reveal.active { opacity: 1; transform: translateY(0); }
-
-        footer { padding: 60px 0; border-top: 1px solid var(--border-thin); text-align: center; color: var(--text-dim); font-size: 0.8rem; }
-
-        @media (max-width: 900px) {
-            .pricing-grid, .feature-grid, .security-card { grid-template-columns: 1fr; }
-            #cursor-dot, #cursor-ring { display: none; }
-            * { cursor: auto !important; }
+        /* --- UI MODALS (Sign Up / Cart) --- */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.85); backdrop-filter: blur(10px);
+            z-index: 1000; display: none; align-items: center; justify-content: center;
         }
+        .modal-content {
+            background: var(--bg-surface); border: 1px solid var(--accent-purple);
+            padding: 40px; border-radius: 24px; width: 100%; max-width: 450px;
+            box-shadow: 0 0 50px var(--accent-glow); position: relative;
+        }
+        .close-modal { position: absolute; top: 20px; right: 20px; cursor: pointer; color: var(--text-dim); }
+        
+        .form-group { margin-bottom: 20px; }
+        .form-group label { display: block; font-size: 0.8rem; color: var(--text-dim); margin-bottom: 8px; font-family: 'JetBrains Mono'; }
+        .form-group input { 
+            width: 100%; background: rgba(255,255,255,0.03); border: 1px solid var(--border-thin);
+            padding: 15px; border-radius: 8px; color: #fff; font-family: 'JetBrains Mono';
+        }
+
+        /* --- Cart Drawer --- */
+        #cart-drawer {
+            position: fixed; top: 0; right: -400px; width: 400px; height: 100%;
+            background: var(--bg-surface); border-left: 1px solid var(--border-thin);
+            z-index: 1001; transition: 0.5s var(--transition-smooth); padding: 40px;
+        }
+        #cart-drawer.open { right: 0; }
+        .cart-item { padding: 20px 0; border-bottom: 1px solid var(--border-thin); display: flex; justify-content: space-between; }
+
+        @media (max-width: 900px) { .pricing-grid { grid-template-columns: 1fr; } #cursor-dot, #cursor-ring, #cart-drawer { display: none; } }
     </style>
 </head>
 <body>
@@ -131,101 +108,71 @@
     <div id="cursor-dot"></div>
     <div id="cursor-ring"></div>
 
+    <div class="modal-overlay" id="signup-modal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeSignup()">[CLOSE]</span>
+            <h2 style="margin-bottom: 10px;">Create Account</h2>
+            <p style="color: var(--text-dim); font-size: 0.9rem; margin-bottom: 30px;">Required for license activation.</p>
+            <form onsubmit="handleSignup(event)">
+                <div class="form-group">
+                    <label>EMAIL ADDRESS</label>
+                    <input type="email" placeholder="user@example.com" required>
+                </div>
+                <div class="form-group">
+                    <label>PASSWORD</label>
+                    <input type="password" placeholder="••••••••" required>
+                </div>
+                <button type="submit" class="buy-btn">Complete Registration</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="cart-drawer">
+        <h2 style="margin-bottom: 30px;">Your Cart</h2>
+        <div id="cart-items-container">
+            <p style="color: var(--text-dim);">Your cart is empty.</p>
+        </div>
+        <div id="cart-footer" style="margin-top: 40px; display: none;">
+            <div style="display: flex; justify-content: space-between; font-weight: 800; margin-bottom: 20px;">
+                <span>TOTAL:</span>
+                <span id="cart-total">$0.00</span>
+            </div>
+            <button class="buy-btn" onclick="alert('Proceeding to ShoPay Integration...')">Checkout with Shopay</button>
+        </div>
+        <button class="buy-btn" style="background: transparent; color: var(--text-dim); margin-top: 10px;" onclick="toggleCart()">Continue Shopping</button>
+    </div>
+
     <nav>
         <div class="container nav-content">
             <a href="#" class="logo">i<span>CLOCK</span></a>
-            <div class="nav-links">
-                <a href="#features">Technical</a>
-                <a href="#pricing">Purchase</a>
-                <a href="#security">Trust</a>
-                <a href="https://discord.gg/9rTbwJsg" target="_blank" style="background: var(--accent-purple); color: #fff; padding: 10px 22px; border-radius: 8px;">Discord</a>
+            <div class="cart-status" onclick="toggleCart()">
+                CART (<span id="cart-count">0</span>)
             </div>
         </div>
     </nav>
 
-    <section class="hero container reveal">
-        <div class="status-badge">● HYPERION BYPASS: STABLE</div>
-        <h1>Performance <br><span style="color: var(--accent-purple);">Redefined.</span></h1>
-        <p>iClock v2 is a specialized external driver framework designed to provide high-precision input emulation without touching game memory.</p>
-        <a href="#pricing" class="buy-btn" style="width: auto; display: inline-block; padding: 18px 45px;">Get Started Now</a>
-    </section>
+    <header class="hero container">
+        <div class="status-badge">● KERNEL V.04 ACTIVE</div>
+        <h1>Dominate the <br><span style="color: var(--accent-purple);">Playing Field.</span></h1>
+    </header>
 
-    <section id="security" class="container reveal security-section">
-        <div class="security-card">
-            <div class="security-icon">🛡️</div>
-            <div class="security-content">
-                <div class="virus-pill">Verified: Safe</div>
-                <h2>Is iClock a Virus?</h2>
-                <p>Because iClock uses a <b>Custom Kernel Driver</b> to communicate with your mouse and keyboard, some aggressive Anti-Virus software (like Windows Defender) may flag it as a "False Positive."</p>
-                <p>This is because our software needs high-level permissions to move your mouse externally. iClock is 100% clean, contains no malware, and is used by thousands of daily active players. We value your privacy as much as your performance.</p>
-            </div>
-        </div>
-    </section>
-
-    <section id="features" class="container reveal features">
-        <div style="text-align: center; margin-bottom: 50px;">
-            <h2 style="font-size: 2.5rem;">Why iClock is Superior</h2>
-        </div>
-        <div class="feature-grid">
-            <div class="feature-box">
-                <h4>01 / External Only</h4>
-                <p>No injection, no hooks. We run completely separate from the game environment.</p>
-            </div>
-            <div class="feature-box">
-                <h4>02 / Input Emulation</h4>
-                <p>We mimic physical mouse movements via a driver, bypassing server-side detection.</p>
-            </div>
-            <div class="feature-box">
-                <h4>03 / Zero Lag</h4>
-                <p>Coded in low-level C++ for the lowest possible latency on the market.</p>
-            </div>
-        </div>
-    </section>
-
-    <section id="pricing" class="container reveal">
-        <div style="text-align: center; margin-bottom: 40px;">
-            <h2 style="font-size: 2.5rem;">Select Access</h2>
-        </div>
+    <section id="pricing" class="container">
         <div class="pricing-grid">
             <div class="tier-card">
-                <h3>Trial</h3>
-                <div class="price">$4.99 <span>/ week</span></div>
-                <ul style="list-style: none; color: var(--text-dim); font-size: 0.9rem;">
-                    <li>Core Aimbot</li>
-                    <li>Visual ESP</li>
-                </ul>
-                <a href="https://discord.gg/9rTbwJsg" class="buy-btn">Purchase</a>
+                <h3>Starter</h3>
+                <div class="price">$4.99 <span>/ wk</span></div>
+                <button class="buy-btn" onclick="attemptPurchase('Starter', 4.99)">Purchase Now</button>
             </div>
-            <div class="tier-card featured">
+            <div class="tier-card" style="border: 2px solid var(--accent-purple);">
                 <h3>Professional</h3>
-                <div class="price">$14.99 <span>/ month</span></div>
-                <ul style="list-style: none; color: var(--text-dim); font-size: 0.9rem;">
-                    <li>Everything in Trial</li>
-                    <li>Integrated Spoofer</li>
-                    <li>24/7 Priority Support</li>
-                </ul>
-                <a href="https://discord.gg/9rTbwJsg" class="buy-btn featured-btn">Purchase Now</a>
+                <div class="price">$14.99 <span>/ mo</span></div>
+                <button class="buy-btn" onclick="attemptPurchase('Professional', 14.99)">Purchase Now</button>
             </div>
             <div class="tier-card">
                 <h3>Legacy</h3>
-                <div class="price">$49.99 <span>/ lifetime</span></div>
-                <ul style="list-style: none; color: var(--text-dim); font-size: 0.9rem;">
-                    <li>Permanent License</li>
-                    <li>Dev-Only Beta Builds</li>
-                </ul>
-                <a href="https://discord.gg/9rTbwJsg" class="buy-btn">Purchase</a>
+                <div class="price">$49.99 <span>/ life</span></div>
+                <button class="buy-btn" onclick="attemptPurchase('Legacy', 49.99)">Purchase Now</button>
             </div>
-        </div>
-    </section>
-
-    <section id="faq" class="container reveal faq-container">
-        <div class="faq-item">
-            <button class="faq-trigger">What games does iClock support? <span>+</span></button>
-            <div class="faq-content">iClock is optimized specifically for Roblox, but our driver emulation works globally across most competitive FPS titles.</div>
-        </div>
-        <div class="faq-item">
-            <button class="faq-trigger">Is the delivery instant? <span>+</span></button>
-            <div class="faq-content">Yes. Once your crypto or card payment is confirmed, the license key is automatically DM'd to you via our Discord bot.</div>
         </div>
     </section>
 
@@ -235,7 +182,70 @@
     </footer>
 
     <script>
-        // --- 1. Floating Particle Background Logic ---
+        let isUserSignedUp = false;
+        let cart = [];
+        let pendingItem = null;
+
+        // --- eCommerce Logic ---
+        function attemptPurchase(name, price) {
+            if (!isUserSignedUp) {
+                pendingItem = { name, price };
+                document.getElementById('signup-modal').style.display = 'flex';
+            } else {
+                addToCart(name, price);
+            }
+        }
+
+        function handleSignup(e) {
+            e.preventDefault();
+            isUserSignedUp = true;
+            closeSignup();
+            if (pendingItem) {
+                addToCart(pendingItem.name, pendingItem.price);
+                pendingItem = null;
+            }
+        }
+
+        function addToCart(name, price) {
+            cart.push({ name, price });
+            updateCartUI();
+            toggleCart(true);
+        }
+
+        function updateCartUI() {
+            const container = document.getElementById('cart-items-container');
+            const totalEl = document.getElementById('cart-total');
+            const footer = document.getElementById('cart-footer');
+            const countEl = document.getElementById('cart-count');
+
+            countEl.innerText = cart.length;
+
+            if (cart.length === 0) {
+                container.innerHTML = '<p style="color: var(--text-dim);">Your cart is empty.</p>';
+                footer.style.display = 'none';
+            } else {
+                container.innerHTML = cart.map(item => `
+                    <div class="cart-item">
+                        <span>${item.name} License</span>
+                        <span>$${item.price}</span>
+                    </div>
+                `).join('');
+                
+                const total = cart.reduce((sum, item) => sum + item.price, 0);
+                totalEl.innerText = `$${total.toFixed(2)}`;
+                footer.style.display = 'block';
+            }
+        }
+
+        function toggleCart(forceOpen = false) {
+            const drawer = document.getElementById('cart-drawer');
+            if (forceOpen) drawer.classList.add('open');
+            else drawer.classList.toggle('open');
+        }
+
+        function closeSignup() { document.getElementById('signup-modal').style.display = 'none'; }
+
+        // --- Background Animation ---
         const canvas = document.getElementById('bg-canvas');
         const ctx = canvas.getContext('2d');
         let particles = [];
@@ -259,42 +269,20 @@
         function animate() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             particles.forEach(p => {
-                p.x += p.speedX;
-                p.y += p.speedY;
-                if (p.x > canvas.width) p.x = 0;
-                if (p.x < 0) p.x = canvas.width;
-                if (p.y > canvas.height) p.y = 0;
-                if (p.y < 0) p.y = canvas.height;
-
+                p.x += p.speedX; p.y += p.speedY;
+                if (p.x > canvas.width) p.x = 0; if (p.y > canvas.height) p.y = 0;
                 ctx.fillStyle = `rgba(157, 78, 255, ${p.opacity})`;
-                ctx.beginPath();
-                ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
-                ctx.fill();
+                ctx.beginPath(); ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2); ctx.fill();
             });
             requestAnimationFrame(animate);
         }
 
-        // --- 2. Interactive Cursor ---
+        // --- Interactive Cursor ---
         const dot = document.getElementById('cursor-dot');
         const ring = document.getElementById('cursor-ring');
         document.addEventListener('mousemove', (e) => {
-            dot.style.left = `${e.clientX}px`;
-            dot.style.top = `${e.clientY}px`;
+            dot.style.left = `${e.clientX}px`; dot.style.top = `${e.clientY}px`;
             ring.style.transform = `translate(${e.clientX - 17}px, ${e.clientY - 17}px)`;
-        });
-
-        // --- 3. Scroll Reveals ---
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) entry.target.classList.add('active');
-            });
-        }, { threshold: 0.1 });
-
-        document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
-
-        // --- 4. FAQ Toggle ---
-        document.querySelectorAll('.faq-trigger').forEach(trigger => {
-            trigger.addEventListener('click', () => trigger.parentNode.classList.toggle('active'));
         });
 
         window.addEventListener('resize', init);
