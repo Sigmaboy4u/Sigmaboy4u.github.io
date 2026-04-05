@@ -3,551 +3,462 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>iClock v2 | The Premier External Framework</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=Space+Mono&display=swap" rel="stylesheet">
+    <title>iClock v2 | Infinite External</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&family=Space+Mono&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg-base: #010101;
-            --bg-card: #08080a;
+            --bg: #030303;
             --accent: #00d2ff;
-            --accent-glow: rgba(0, 210, 255, 0.3);
-            --text-high: #fbfbfb;
-            --text-med: #999;
-            --border: rgba(255, 255, 255, 0.05);
-            --ease: cubic-bezier(0.23, 1, 0.32, 1);
+            --accent-rgb: 0, 210, 255;
+            --text: #ffffff;
+            --text-dim: rgba(255, 255, 255, 0.6);
+            --glass: rgba(255, 255, 255, 0.03);
+            --border: rgba(255, 255, 255, 0.1);
         }
 
-        /* --- Global & Scrollbar --- */
-        * { margin: 0; padding: 0; box-sizing: border-box; outline: none; }
-        html { scroll-behavior: smooth; font-size: 16px; overflow-x: hidden; }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
         body {
-            background-color: var(--bg-base);
-            color: var(--text-high);
-            font-family: 'Inter', sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            font-family: 'Plus Jakarta Sans', sans-serif;
             overflow-x: hidden;
-            -webkit-font-smoothing: antialiased;
-            cursor: none; /* Hide real cursor for custom trail */
+            line-height: 1.6;
+            cursor: none; /* Hide default cursor */
         }
 
-        ::-webkit-scrollbar { width: 6px; }
-        ::-webkit-scrollbar-track { background: var(--bg-base); }
-        ::-webkit-scrollbar-thumb { background: #1a1a1a; border-radius: 3px; }
-        ::-webkit-scrollbar-thumb:hover { background: var(--accent); }
-
-        /* --- Cursor Trail Effect --- */
-        #cursor-trail {
-            position: fixed;
-            width: 15px; height: 15px;
+        /* --- Custom Animated Cursor --- */
+        #cursor-dot {
+            width: 8px; height: 8px;
             background: var(--accent);
             border-radius: 50%;
+            position: fixed;
+            pointer-events: none;
+            z-index: 10001;
+            transition: transform 0.1s ease;
+        }
+
+        #cursor-outline {
+            width: 40px; height: 40px;
+            border: 1px solid rgba(var(--accent-rgb), 0.5);
+            border-radius: 50%;
+            position: fixed;
             pointer-events: none;
             z-index: 10000;
-            mix-blend-mode: difference;
-            transition: transform 0.1s var(--ease), opacity 0.3s ease;
-            transform: translate(-50%, -50%);
-            box-shadow: 0 0 15px var(--accent);
+            transition: all 0.2s cubic-bezier(0.23, 1, 0.32, 1);
         }
 
-        #cursor-outer {
-            position: fixed;
-            width: 40px; height: 40px;
-            border: 2px solid var(--accent);
-            border-radius: 50%;
-            pointer-events: none;
-            z-index: 9999;
-            transition: transform 0.15s var(--ease), width 0.3s ease, height 0.3s ease;
-            transform: translate(-50%, -50%);
-            opacity: 0.5;
+        .cursor-hover #cursor-outline {
+            width: 60px; height: 60px;
+            background: rgba(var(--accent-rgb), 0.1);
+            border-color: var(--accent);
         }
 
-        /* Hover states for cursor */
-        .cursor-hover #cursor-trail { transform: translate(-50%, -50%) scale(0.5); }
-        .cursor-hover #cursor-outer { width: 60px; height: 60px; opacity: 1; background: rgba(0,210,255,0.05); }
-
-        /* --- Pure CSS Interactive Particle Background --- */
-        .background-container {
+        /* --- Background Canvas --- */
+        #bg-canvas {
             position: fixed;
             top: 0; left: 0;
             width: 100%; height: 100%;
             z-index: -1;
-            overflow: hidden;
-            background: radial-gradient(circle at 50% 50%, #050505 0%, #010101 100%);
+            background: radial-gradient(circle at center, #0a0a0c 0%, #030303 100%);
         }
 
-        .particle {
-            position: absolute;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, 0.2);
-            animation: move-particle linear infinite;
+        /* --- Scroll Animation Classes --- */
+        .reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
-        @keyframes move-particle {
-            0% { transform: translateY(0) translateX(0); opacity: 0; }
-            10% { opacity: 1; }
-            90% { opacity: 1; }
-            100% { transform: translateY(-100vh) translateX(20vw); opacity: 0; }
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
         }
 
-        /* Customizing 50 particles with different sizes/speeds/delays */
-        /* Generated structure: .particle:nth-child(i) { size, location, animation-duration, animation-delay } */
-        /* (This section replaces ~100 lines of standard static CSS) */
-        
-        .particle:nth-child(1)  { width: 2px; height: 2px; left: 10%; top: 100%; animation-duration: 15s; animation-delay: 1s; }
-        .particle:nth-child(2)  { width: 3px; height: 3px; left: 25%; top: 100%; animation-duration: 18s; animation-delay: 5s; background: rgba(0,210,255,0.3); }
-        .particle:nth-child(3)  { width: 1px; height: 1px; left: 40%; top: 100%; animation-duration: 12s; animation-delay: 2s; }
-        .particle:nth-child(4)  { width: 4px; height: 4px; left: 60%; top: 100%; animation-duration: 20s; animation-delay: 8s; background: rgba(0,210,255,0.3); }
-        .particle:nth-child(5)  { width: 2px; height: 2px; left: 80%; top: 100%; animation-duration: 14s; animation-delay: 3s; }
-        /* Repetitive particle generation abbreviated for brevity in this display, 
-           imagine 50+ unique nth-child selectors here in the real build */
-        .particle:nth-child(6)  { width: 2px; height: 2px; left: 15%; top: 100%; animation-duration: 16s; animation-delay: 4s; }
-        .particle:nth-child(7)  { width: 1px; height: 1px; left: 35%; top: 100%; animation-duration: 13s; animation-delay: 0s; }
-        .particle:nth-child(8)  { width: 3px; height: 3px; left: 55%; top: 100%; animation-duration: 19s; animation-delay: 9s; background: rgba(0,210,255,0.2); }
-        .particle:nth-child(9)  { width: 2px; height: 2px; left: 75%; top: 100%; animation-duration: 15s; animation-delay: 6s; }
-        .particle:nth-child(10) { width: 1px; height: 1px; left: 95%; top: 100%; animation-duration: 11s; animation-delay: 2s; }
-
-        /* --- Utility Classes --- */
-        .container { max-width: 1250px; margin: 0 auto; padding: 0 25px; }
-        .text-gradient { background: linear-gradient(135deg, #fff 0%, var(--accent) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        .glass { background: rgba(8, 8, 10, 0.7); border: 1px solid var(--border); backdrop-filter: blur(15px); }
-
-        /* --- Header Navigation --- */
+        /* --- Navigation --- */
         nav {
-            height: 90px;
-            display: flex;
-            align-items: center;
             position: fixed;
             top: 0; width: 100%;
+            padding: 25px 50px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
             z-index: 1000;
+            backdrop-filter: blur(10px);
             border-bottom: 1px solid var(--border);
-            background: rgba(1, 1, 1, 0.8);
-            backdrop-filter: blur(20px);
         }
-
-        .nav-content { display: flex; justify-content: space-between; align-items: center; width: 100%; }
 
         .logo {
-            font-size: 1.4rem;
             font-weight: 800;
+            font-size: 1.5rem;
+            letter-spacing: -1px;
             display: flex;
             align-items: center;
-            gap: 12px;
-            color: white;
-            text-decoration: none;
-            letter-spacing: -1px;
+            gap: 10px;
         }
 
-        .logo-symbol {
-            width: 32px; height: 32px;
-            border: 3px solid var(--accent);
-            border-radius: 8px;
-            position: relative;
-            transform: rotate(-15deg);
-            box-shadow: 0 0 15px var(--accent-glow);
-        }
-
-        .nav-links { display: flex; gap: 40px; align-items: center; }
-        .nav-links a {
-            text-decoration: none;
-            color: var(--text-med);
-            font-size: 0.9rem;
-            font-weight: 600;
-            transition: 0.3s ease;
-        }
-        .nav-links a:hover { color: white; }
+        .logo span { color: var(--accent); }
 
         /* --- Hero Section --- */
         .hero {
-            padding: 230px 0 140px;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
             text-align: center;
+            padding: 0 20px;
         }
 
-        .hero-tag {
-            display: inline-flex;
-            align-items: center;
+        .badge {
+            background: rgba(var(--accent-rgb), 0.1);
+            color: var(--accent);
             padding: 8px 20px;
-            background: rgba(0, 210, 255, 0.05);
-            border: 1px solid var(--accent);
             border-radius: 100px;
             font-family: 'Space Mono', monospace;
-            font-size: 0.75rem;
-            color: var(--accent);
-            margin-bottom: 35px;
-            letter-spacing: 2px;
+            font-size: 0.8rem;
+            border: 1px solid var(--accent);
+            margin-bottom: 30px;
             text-transform: uppercase;
+            letter-spacing: 2px;
         }
 
         .hero h1 {
-            font-size: clamp(3rem, 7vw, 6rem);
-            line-height: 0.95;
-            letter-spacing: -3px;
-            margin-bottom: 35px;
+            font-size: clamp(3.5rem, 10vw, 7rem);
             font-weight: 800;
+            line-height: 0.9;
+            margin-bottom: 25px;
+            background: linear-gradient(to bottom, #fff 40%, rgba(255,255,255,0.5));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
 
         .hero p {
-            font-size: 1.25rem;
-            color: var(--text-med);
-            max-width: 700px;
-            margin: 0 auto 50px;
-            line-height: 1.5;
+            font-size: 1.2rem;
+            color: var(--text-dim);
+            max-width: 600px;
+            margin-bottom: 40px;
         }
 
-        .cta-group { display: flex; gap: 20px; justify-content: center; }
-
+        /* --- Buttons --- */
         .btn {
             padding: 18px 45px;
             border-radius: 12px;
             font-weight: 700;
             text-decoration: none;
-            display: inline-flex;
-            align-items: center;
-            gap: 10px;
-            transition: var(--ease);
-            cursor: none; /* Keep cursor hidden over buttons */
-            border: none;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            display: inline-block;
         }
 
         .btn-primary {
             background: var(--accent);
             color: #000;
-            box-shadow: 0 10px 30px var(--accent-glow);
+            box-shadow: 0 10px 30px rgba(var(--accent-rgb), 0.3);
         }
 
         .btn-primary:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 15px 40px rgba(0, 210, 255, 0.4);
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(var(--accent-rgb), 0.5);
         }
 
-        .btn-secondary { background: rgba(255,255,255,0.04); color: white; border: 1px solid var(--border); }
-        .btn-secondary:hover { background: rgba(255,255,255,0.08); }
-
-        /* --- Status Section --- */
-        .status-bar {
-            margin-top: 100px;
-            padding: 30px;
-            border-radius: 20px;
-            max-width: 800px;
-            margin-left: auto; margin-right: auto;
-            display: grid; grid-template-columns: repeat(3, 1fr);
-            text-align: center;
-            font-family: 'Space Mono', monospace;
-        }
-
-        .status-item { font-size: 0.9rem; color: var(--text-med); }
-        .status-item span { color: #00ff88; font-weight: bold; }
-
-        /* --- Pricing Section --- */
-        .pricing { padding: 150px 0; position: relative; }
-        
-        .section-header { text-align: center; margin-bottom: 80px; }
-        .section-header h2 { font-size: 3rem; font-weight: 800; }
-        .section-header p { color: var(--text-med); margin-top: 15px; }
-
-        .pricing-grid {
+        /* --- Features Section --- */
+        .features {
+            padding: 150px 0;
+            max-width: 1200px;
+            margin: 0 auto;
             display: grid;
             grid-template-columns: repeat(3, 1fr);
             gap: 30px;
         }
 
-        .price-card {
-            padding: 60px 45px;
-            border-radius: 30px;
-            display: flex;
-            flex-direction: column;
-            transition: 0.3s ease;
+        .card {
+            background: var(--glass);
+            border: 1px solid var(--border);
+            padding: 50px 40px;
+            border-radius: 24px;
+            transition: 0.4s;
             position: relative;
         }
 
-        .price-card:hover { transform: translateY(-10px); border-color: var(--accent); }
-
-        .card-plan { color: var(--text-med); font-size: 0.9rem; font-weight: 600; text-transform: uppercase; margin-bottom: 15px; }
-        .card-price { font-size: 4rem; font-weight: 800; margin-bottom: 10px; line-height: 1; }
-        .card-price span { font-size: 1.1rem; color: var(--text-med); font-weight: 400; }
-
-        .card-features { list-style: none; margin: 40px 0; flex-grow: 1; }
-        .card-features li {
-            padding: 12px 0;
-            color: var(--text-high);
-            font-size: 0.95rem;
-            display: flex; align-items: center; gap: 12px;
+        .card:hover {
+            border-color: var(--accent);
+            background: rgba(var(--accent-rgb), 0.05);
+            transform: scale(1.02);
         }
 
-        .card-features li::before {
-            content: "";
-            width: 8px; height: 8px;
-            background: var(--accent);
-            border-radius: 50%;
+        .card h3 { font-size: 1.5rem; margin-bottom: 15px; }
+        .card p { color: var(--text-dim); font-size: 0.95rem; }
+
+        /* --- Pricing --- */
+        .pricing {
+            padding: 150px 0;
+            text-align: center;
         }
 
-        .featured { border: 2px solid var(--accent); box-shadow: 0 15px 40px var(--accent-glow); }
-        .featured-tag {
-            position: absolute; top: -15px; left: 50%; transform: translateX(-50%);
-            background: var(--accent); color: #000;
-            padding: 5px 20px; border-radius: 20px; font-size: 0.75rem; font-weight: 800;
+        .pricing-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 40px;
+            max-width: 1100px;
+            margin: 60px auto 0;
         }
+
+        .price-card {
+            padding: 60px 40px;
+            border-radius: 30px;
+            background: linear-gradient(180deg, rgba(255,255,255,0.05) 0%, transparent 100%);
+            border: 1px solid var(--border);
+        }
+
+        .price-card.featured {
+            border-color: var(--accent);
+            box-shadow: 0 0 50px rgba(var(--accent-rgb), 0.2);
+        }
+
+        .amount { font-size: 4rem; font-weight: 800; margin: 20px 0; }
+        .amount span { font-size: 1.2rem; color: var(--text-dim); font-weight: 400; }
 
         /* --- Footer --- */
-        footer { padding: 100px 0 50px; border-top: 1px solid var(--border); text-align: center; color: var(--text-med); font-size: 0.85rem; }
-        .footer-logo { margin-bottom: 30px; }
-        .footer-disclaimer { max-width: 600px; margin: 30px auto; color: #444; font-size: 0.75rem; }
+        footer {
+            padding: 100px 50px;
+            border-top: 1px solid var(--border);
+            text-align: center;
+            color: var(--text-dim);
+            font-size: 0.8rem;
+        }
 
-        /* --- Purchase Modal (In-page Pop-up) --- */
-        #purchase-modal {
+        /* --- Modal --- */
+        #buy-modal {
             position: fixed;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            background: rgba(0,0,0,0.85);
-            backdrop-filter: blur(10px);
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.9);
             z-index: 2000;
-            display: flex;
-            align-items: center;
+            display: none;
             justify-content: center;
-            opacity: 0; pointer-events: none;
-            transition: opacity 0.4s var(--ease);
+            align-items: center;
+            backdrop-filter: blur(15px);
         }
 
-        #purchase-modal.open { opacity: 1; pointer-events: auto; }
-
-        .modal-content {
-            width: 90%; max-width: 500px;
-            padding: 50px;
+        .modal-box {
+            background: #0a0a0c;
+            padding: 60px;
             border-radius: 30px;
-            position: relative;
-            transform: scale(0.9);
-            transition: transform 0.4s var(--ease);
+            border: 1px solid var(--accent);
+            text-align: center;
+            max-width: 500px;
         }
 
-        #purchase-modal.open .modal-content { transform: scale(1); }
-
-        .close-modal {
-            position: absolute; top: 25px; right: 25px;
-            background: transparent; border: none; color: #444;
-            font-size: 1.5rem; cursor: pointer; transition: 0.3s;
-        }
-        .close-modal:hover { color: var(--accent); }
-
-        .modal-header { text-align: center; margin-bottom: 30px; }
-        .modal-header h3 { font-size: 2rem; }
-        .modal-header span { color: var(--accent); font-weight: bold; }
-
-        .payment-options { display: flex; flex-direction: column; gap: 15px; }
-        .pay-btn {
-            width: 100%;
-            padding: 15px;
-            border-radius: 12px;
-            background: rgba(255,255,255,0.03);
-            border: 1px solid var(--border);
-            color: white;
-            font-size: 1rem; font-weight: 600;
-            text-align: left;
-            cursor: pointer;
-            transition: 0.3s ease;
-            display: flex; align-items: center; gap: 15px;
-        }
-
-        .pay-btn:hover { background: rgba(0,210,255,0.05); border-color: var(--accent); transform: translateX(5px); }
-
-        /* Responsive */
-        @media (max-width: 1024px) {
-            .pricing-grid { grid-template-columns: 1fr; }
-            .price-card { padding: 40px; }
-            .hero h1 { font-size: 3.5rem; }
-            body { cursor: auto; } /* Disable custom cursor on mobile */
-            #cursor-trail, #cursor-outer { display: none; }
+        @media (max-width: 900px) {
+            .features, .pricing-grid { grid-template-columns: 1fr; padding: 20px; }
+            #cursor-dot, #cursor-outline { display: none; }
+            body { cursor: auto; }
         }
     </style>
 </head>
 <body>
 
-    <div class="background-container">
-        <div class="particle"></div><div class="particle"></div><div class="particle"></div><div class="particle"></div><div class="particle"></div>
-        <div class="particle"></div><div class="particle"></div><div class="particle"></div><div class="particle"></div><div class="particle"></div>
-        <div class="particle"></div><div class="particle"></div><div class="particle"></div><div class="particle"></div><div class="particle"></div>
-        <div class="particle"></div><div class="particle"></div><div class="particle"></div><div class="particle"></div><div class="particle"></div>
-        <div class="particle"></div><div class="particle"></div><div class="particle"></div><div class="particle"></div><div class="particle"></div>
-        <div class="particle"></div><div class="particle"></div><div class="particle"></div><div class="particle"></div><div class="particle"></div>
-        <div class="particle"></div><div class="particle"></div><div class="particle"></div><div class="particle"></div><div class="particle"></div>
-        <div class="particle"></div><div class="particle"></div><div class="particle"></div><div class="particle"></div><div class="particle"></div>
-        <div class="particle"></div><div class="particle"></div><div class="particle"></div><div class="particle"></div><div class="particle"></div>
-        <div class="particle"></div><div class="particle"></div><div class="particle"></div><div class="particle"></div><div class="particle"></div>
-    </div>
-
-    <div id="cursor-trail"></div>
-    <div id="cursor-outer"></div>
+    <canvas id="bg-canvas"></canvas>
+    <div id="cursor-dot"></div>
+    <div id="cursor-outline"></div>
 
     <nav>
-        <div class="container nav-content">
-            <a href="#" class="logo">
-                <div class="logo-symbol"></div>
-                iCLOCK<span>v2</span>
-            </a>
-            <div class="nav-links">
-                <a href="#pricing">Pricing</a>
-                <a href="https://discord.gg/iclock" target="_blank">Community</a>
-                <a href="#" class="btn btn-primary open-buy-modal" style="padding: 10px 25px; font-size: 0.85rem;">Purchase</a>
-            </div>
+        <div class="logo">iCLOCK<span>V2</span></div>
+        <div style="display: flex; gap: 30px; align-items: center;">
+            <a href="#features" style="color: var(--text-dim); text-decoration: none; font-weight: 600;">Features</a>
+            <a href="#" class="btn btn-primary trigger-buy" style="padding: 10px 25px; font-size: 0.9rem;">Join Now</a>
         </div>
     </nav>
 
-    <main class="container">
-        <section class="hero">
-            <div class="hero-tag">Aether Architecture Active</div>
-            <h1>Bypass the <br><span class="text-gradient">Competition.</span></h1>
-            <p>The next generation of external emulation. Experience human-grade precision, zero-latency inputs, and an anti-cheat shield that never sleeps.</p>
-            <div class="cta-group">
-                <a href="#pricing" class="btn btn-primary">View Plans</a>
-                <a href="https://discord.gg/iclock" target="_blank" class="btn btn-secondary">Join Discord</a>
+    <section class="hero">
+        <div class="badge">Next-Gen External Core</div>
+        <h1>Sync Your<br>Reality.</h1>
+        <p>A professional-grade external framework designed for undetectable performance and inhuman precision on Roblox.</p>
+        <div class="hero-btns">
+            <a href="#pricing" class="btn btn-primary">Get License</a>
+        </div>
+    </section>
+
+    <section id="features" class="container">
+        <div class="features">
+            <div class="card reveal">
+                <h3>0ms Latency</h3>
+                <p>Engineered with low-level C++ hooks to ensure every input is processed at the hardware level with zero delay.</p>
             </div>
-
-            <div class="status-bar glass">
-                <div class="status-item">Status: <span>Undetected</span></div>
-                <div class="status-item">Build: <span>v2.04.1</span></div>
-                <div class="status-item">Platform: <span>Roblox</span></div>
+            <div class="card reveal">
+                <h3>Kernel Stealth</h3>
+                <p>Operates entirely outside the game's memory space, making it invisible to standard client-side checks.</p>
             </div>
-        </section>
-
-        <section id="pricing" class="pricing">
-            <div class="section-header">
-                <h2>Select Access Tier</h2>
-                <p>Simple, transparent pricing for all levels of play.</p>
-            </div>
-
-            <div class="pricing-grid">
-                <div class="price-card glass">
-                    <div class="card-plan">Solo</div>
-                    <div class="card-price">$4.99 <span>/ week</span></div>
-                    <ul class="card-features">
-                        <li>Core External Framework</li>
-                        <li>Configurable Smoothing</li>
-                        <li>Essential Visual Modules</li>
-                        <li>24/7 Standard Support</li>
-                    </ul>
-                    <button class="btn btn-secondary open-buy-modal" data-plan="Solo" data-price="$4.99">Select Solo</button>
-                </div>
-
-                <div class="price-card glass featured">
-                    <div class="featured-tag">Most Popular</div>
-                    <div class="card-plan" style="color: white;">Elite</div>
-                    <div class="card-price text-gradient">$14.99 <span>/ month</span></div>
-                    <ul class="card-features">
-                        <li>Neural Mouse Smoothing</li>
-                        <li>Advanced Skeleton ESP</li>
-                        <li>Hardware ID Virtualization</li>
-                        <li>Priority Support & Discord</li>
-                    </ul>
-                    <button class="btn btn-primary open-buy-modal" data-plan="Elite" data-price="$14.99">Select Elite</button>
-                </div>
-
-                <div class="price-card glass">
-                    <div class="card-plan">Legacy</div>
-                    <div class="card-price">$59.99 <span>/ infinite</span></div>
-                    <ul class="card-features">
-                        <li>Lifetime Access License</li>
-                        <li>All Future Beta Features</li>
-                        <li>Private Developer Builds</li>
-                        <li>One-time Payment</li>
-                    </ul>
-                    <button class="btn btn-secondary open-buy-modal" data-plan="Legacy" data-price="$59.99">Select Legacy</button>
-                </div>
-            </div>
-        </section>
-    </main>
-
-    <footer>
-        <div class="container">
-            <div class="logo footer-logo" style="justify-content: center; opacity: 0.3;">
-                <div class="logo-symbol"></div>
-                iCLOCK
-            </div>
-            <p>&copy; 2026 iClock Systems. Trusted by 2,000+ players globally.</p>
-            <div class="footer-disclaimer">
-                Roblox is a trademark of Roblox Corporation. This software is an independent research tool.
-                Use of third-party modifications may violate Roblox's ToS. We are not responsible for account penalties.
+            <div class="card reveal">
+                <h3>Auto-Updates</h3>
+                <p>Cloud-synced offsets mean you never have to wait for a manual update after a game patch.</p>
             </div>
         </div>
-    </footer>
+    </section>
 
-    <div id="purchase-modal">
-        <div class="modal-content glass">
-            <button class="close-modal">&times;</button>
-            <div class="modal-header">
-                <h3>Sync <span id="modal-plan-name">Plan</span></h3>
-                <p>Total due: <span id="modal-plan-price">$0.00</span></p>
+    <section id="pricing" class="pricing">
+        <div class="reveal">
+            <h2 style="font-size: 3rem;">Choose Your Level</h2>
+            <p style="color: var(--text-dim);">Instant delivery. Permanent support.</p>
+        </div>
+
+        <div class="pricing-grid">
+            <div class="price-card reveal">
+                <p>SOLO</p>
+                <div class="amount">$4.99<span>/week</span></div>
+                <ul style="list-style: none; color: var(--text-dim); margin-bottom: 30px;">
+                    <li>External Core Access</li>
+                    <li>Basic ESP Pack</li>
+                    <li>24/7 Support</li>
+                </ul>
+                <button class="btn btn-primary trigger-buy" style="width: 100%;">Buy Solo</button>
             </div>
-            <div class="payment-options">
-                <button class="pay-btn" onclick="alert('Redirecting to secure Credit Card gateway...')">
-                    <span style="font-size: 1.2rem;">💳</span> Credit / Debit Card
-                </button>
-                <button class="pay-btn" onclick="alert('Opening Crypto payment portal (BTC/LTC/ETH)...')">
-                    <span style="font-size: 1.2rem;">₿</span> Cryptocurrencies (5% Off)
-                </button>
-                <button class="pay-btn" onclick="alert('Opening PayPal checkout...')">
-                    <span style="font-size: 1.2rem;">🅿️</span> PayPal (Global)
-                </button>
+
+            <div class="price-card featured reveal">
+                <p>ELITE</p>
+                <div class="amount">$14.99<span>/month</span></div>
+                <ul style="list-style: none; color: var(--text-dim); margin-bottom: 30px;">
+                    <li>Advanced Mouse Smoothing</li>
+                    <li>Full Visual Suite</li>
+                    <li>HWID Virtualizer</li>
+                </ul>
+                <button class="btn btn-primary trigger-buy" style="width: 100%;">Buy Elite</button>
             </div>
-            <p style="color: #444; font-size: 0.7rem; text-align: center; margin-top: 25px;">
-                Payments secured via industry standard encryption. Instant key delivery.
-            </p>
+
+            <div class="price-card reveal">
+                <p>LIFETIME</p>
+                <div class="amount">$59.99<span>/once</span></div>
+                <ul style="list-style: none; color: var(--text-dim); margin-bottom: 30px;">
+                    <li>Permanent License</li>
+                    <li>Beta Build Access</li>
+                    <li>Private Discord</li>
+                </ul>
+                <button class="btn btn-primary trigger-buy" style="width: 100%;">Buy Legacy</button>
+            </div>
+        </div>
+    </section>
+
+    <div id="buy-modal">
+        <div class="modal-box">
+            <h2>Instant Delivery</h2>
+            <p style="margin: 20px 0; color: var(--text-dim);">Our automated system delivers your key via Discord/Email immediately after payment.</p>
+            <div style="display: flex; flex-direction: column; gap: 15px;">
+                <button class="btn btn-primary" onclick="window.location.reload()">Pay with Crypto</button>
+                <button class="btn btn-primary" style="background: #fff;" onclick="window.location.reload()">Pay with Stripe</button>
+                <button style="background: none; border: none; color: #444; cursor: pointer; margin-top: 10px;" id="close-modal">Cancel</button>
+            </div>
         </div>
     </div>
 
+    <footer>
+        <p>&copy; 2026 iClock Software. Designed for elite players.</p>
+        <p style="margin-top: 10px; color: #333; font-size: 0.7rem;">iClock is not affiliated with Roblox Corporation. This software is for research and educational purposes only.</p>
+    </footer>
+
     <script>
-        // 1. Cursor Trail & Hover Logic
-        const trail = document.getElementById('cursor-trail');
-        const outer = document.getElementById('cursor-outer');
-        const body = document.body;
+        // --- 1. Particle Background Logic ---
+        const canvas = document.getElementById('bg-canvas');
+        const ctx = canvas.getContext('2d');
+        let particles = [];
+        let mouse = { x: null, y: null };
 
-        document.addEventListener('mousemove', (e) => {
-            // Update positions instantly for trail, slightly lagged for outer
-            trail.style.left = e.clientX + 'px';
-            trail.style.top = e.clientY + 'px';
-            outer.style.left = e.clientX + 'px';
-            outer.style.top = e.clientY + 'px';
+        function initCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            particles = [];
+            for (let i = 0; i < 100; i++) {
+                particles.push({
+                    x: Math.random() * canvas.width,
+                    y: Math.random() * canvas.height,
+                    size: Math.random() * 2,
+                    speedX: Math.random() * 0.5 - 0.25,
+                    speedY: Math.random() * 0.5 - 0.25
+                });
+            }
+        }
+
+        function animateCanvas() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            particles.forEach(p => {
+                p.x += p.speedX;
+                p.y += p.speedY;
+                if (p.x < 0 || p.x > canvas.width) p.speedX *= -1;
+                if (p.y < 0 || p.y > canvas.height) p.speedY *= -1;
+                
+                ctx.fillStyle = 'rgba(0, 210, 255, 0.3)';
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+                ctx.fill();
+
+                // Connect to mouse
+                let dx = mouse.x - p.x;
+                let dy = mouse.y - p.y;
+                let dist = Math.sqrt(dx*dx + dy*dy);
+                if (dist < 150) {
+                    ctx.strokeStyle = `rgba(0, 210, 255, ${1 - dist/150})`;
+                    ctx.lineWidth = 0.5;
+                    ctx.beginPath();
+                    ctx.moveTo(p.x, p.y);
+                    ctx.lineTo(mouse.x, mouse.y);
+                    ctx.stroke();
+                }
+            });
+            requestAnimationFrame(animateCanvas);
+        }
+
+        // --- 2. Custom Cursor Follower ---
+        const dot = document.getElementById('cursor-dot');
+        const outline = document.getElementById('cursor-outline');
+
+        window.addEventListener('mousemove', (e) => {
+            mouse.x = e.clientX;
+            mouse.y = e.clientY;
+            dot.style.left = e.clientX + 'px';
+            dot.style.top = e.clientY + 'px';
+            
+            // Outer ring with slight lag
+            setTimeout(() => {
+                outline.style.left = (e.clientX - 20) + 'px';
+                outline.style.top = (e.clientY - 20) + 'px';
+            }, 50);
         });
 
-        // Detect hover over clickable elements
-        const clickables = document.querySelectorAll('a, button, .open-buy-modal');
-        clickables.forEach(link => {
-            link.addEventListener('mouseenter', () => body.classList.add('cursor-hover'));
-            link.addEventListener('mouseleave', () => body.classList.remove('cursor-hover'));
+        // Hover effects
+        document.querySelectorAll('.btn, .card').forEach(el => {
+            el.addEventListener('mouseenter', () => document.body.classList.add('cursor-hover'));
+            el.addEventListener('mouseleave', () => document.body.classList.remove('cursor-hover'));
         });
 
-        // 2. Pure-JS Modal Logic (No Page Redirects)
-        const modal = document.getElementById('purchase-modal');
-        const modalPlanName = document.getElementById('modal-plan-name');
-        const modalPlanPrice = document.getElementById('modal-plan-price');
-        const openModalBtns = document.querySelectorAll('.open-buy-modal');
-        const closeModalBtn = document.querySelector('.close-modal');
+        // --- 3. Scroll Reveal Animation ---
+        function reveal() {
+            let reveals = document.querySelectorAll('.reveal');
+            reveals.forEach(el => {
+                let windowHeight = window.innerHeight;
+                let elementTop = el.getBoundingClientRect().top;
+                if (elementTop < windowHeight - 100) {
+                    el.classList.add('active');
+                }
+            });
+        }
 
-        openModalBtns.forEach(btn => {
+        // --- 4. In-Page Modal Logic ---
+        const modal = document.getElementById('buy-modal');
+        document.querySelectorAll('.trigger-buy').forEach(btn => {
             btn.addEventListener('click', (e) => {
                 e.preventDefault();
-                // Get plan details from data attributes
-                const plan = btn.getAttribute('data-plan') || 'Access';
-                const price = btn.getAttribute('data-price') || '$14.99';
-                
-                // Update modal content
-                modalPlanName.textContent = plan;
-                modalPlanPrice.textContent = price;
-                
-                // Open modal
-                modal.classList.add('open');
+                modal.style.display = 'flex';
             });
         });
-
-        // Close modal logic (Clicking X or outside content)
-        closeModalBtn.addEventListener('click', () => modal.classList.remove('open'));
-        modal.addEventListener('click', (e) => {
-            if (e.target === modal) modal.classList.remove('open');
+        document.getElementById('close-modal').addEventListener('click', () => {
+            modal.style.display = 'none';
         });
 
-        // Handle ESC key to close
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape' && modal.classList.contains('open')) {
-                modal.classList.remove('open');
-            }
-        });
+        window.addEventListener('scroll', reveal);
+        window.addEventListener('resize', initCanvas);
+        initCanvas();
+        animateCanvas();
+        reveal(); // Trigger on load
     </script>
-
 </body>
 </html>
