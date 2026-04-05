@@ -3,609 +3,551 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>iClock v2 | Advanced External Emulation</title>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&family=Space+Mono&display=swap" rel="stylesheet">
+    <title>iClock v2 | Elite External Framework</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@200;400;600;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg-deep: #030303;
-            --bg-card: #0a0a0c;
-            --accent-primary: #00d2ff;
-            --accent-secondary: #3a7bd5;
-            --text-high: #ffffff;
-            --text-med: #b0b0b0;
-            --text-low: #666666;
-            --border-glow: rgba(0, 210, 255, 0.2);
-            --gradient-main: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
-            --shadow-glow: 0 0 30px rgba(0, 210, 255, 0.15);
+            --bg-base: #020203;
+            --bg-surface: #0a0a0c;
+            --accent: #00d2ff;
+            --accent-soft: rgba(0, 210, 255, 0.1);
+            --accent-gradient: linear-gradient(135deg, #00d2ff 0%, #3a7bd5 100%);
+            --text-primary: #f5f5f7;
+            --text-secondary: #86868b;
+            --border: rgba(255, 255, 255, 0.06);
+            --transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
-        /* --- Global Styles --- */
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            scroll-behavior: smooth;
-        }
-
+        /* --- Reset & Base --- */
+        * { margin: 0; padding: 0; box-sizing: border-box; outline: none; }
+        html { scroll-behavior: smooth; font-size: 16px; }
         body {
-            background-color: var(--bg-deep);
-            color: var(--text-high);
+            background-color: var(--bg-base);
+            color: var(--text-primary);
             font-family: 'Plus Jakarta Sans', sans-serif;
             overflow-x: hidden;
-            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
         }
 
-        /* Custom Scrollbar */
-        ::-webkit-scrollbar { width: 8px; }
-        ::-webkit-scrollbar-track { background: var(--bg-deep); }
-        ::-webkit-scrollbar-thumb { 
-            background: #222; 
-            border-radius: 10px; 
-            border: 2px solid var(--bg-deep);
-        }
-        ::-webkit-scrollbar-thumb:hover { background: var(--accent-primary); }
-
-        /* --- Background Decoration --- */
-        .orb {
+        /* --- Advanced Background Engine --- */
+        .grid-bg {
             position: fixed;
-            width: 500px;
-            height: 500px;
-            background: var(--accent-primary);
-            filter: blur(150px);
-            opacity: 0.05;
-            border-radius: 50%;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-image: 
+                linear-gradient(var(--border) 1px, transparent 1px),
+                linear-gradient(90deg, var(--border) 1px, transparent 1px);
+            background-size: 50px 50px;
+            z-index: -2;
+            mask-image: radial-gradient(circle at 50% 50%, black, transparent 80%);
+            opacity: 0.3;
+        }
+
+        .glow-sphere {
+            position: fixed;
+            width: 600px; height: 600px;
+            background: radial-gradient(circle, var(--accent-soft) 0%, transparent 70%);
+            top: -200px; right: -100px;
             z-index: -1;
-            animation: move 20s infinite alternate;
+            filter: blur(80px);
+            animation: float 15s infinite alternate ease-in-out;
         }
 
-        @keyframes move {
-            from { transform: translate(-10%, -10%); }
-            to { transform: translate(20%, 20%); }
+        @keyframes float {
+            0% { transform: translate(0, 0) scale(1); }
+            100% { transform: translate(-100px, 100px) scale(1.2); }
         }
 
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 24px;
-        }
+        /* --- Utility Classes --- */
+        .container { max-width: 1300px; margin: 0 auto; padding: 0 30px; }
+        .text-gradient { background: var(--accent-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .glass { background: rgba(10, 10, 12, 0.7); border: 1px solid var(--border); backdrop-filter: blur(12px); }
 
-        /* --- Navigation --- */
+        /* --- Header Navigation --- */
         nav {
+            height: 90px;
+            display: flex;
+            align-items: center;
+            position: fixed;
+            top: 0; width: 100%;
+            z-index: 1000;
+            border-bottom: 1px solid var(--border);
+            background: rgba(2, 2, 3, 0.8);
+            backdrop-filter: blur(20px);
+        }
+
+        .nav-content {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 25px 0;
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-            background: rgba(3, 3, 3, 0.8);
-            backdrop-filter: blur(12px);
-            border-bottom: 1px solid rgba(255,255,255,0.05);
+            width: 100%;
         }
 
         .logo {
+            font-size: 1.5rem;
             font-weight: 800;
-            font-size: 1.6rem;
             display: flex;
             align-items: center;
-            gap: 10px;
-            letter-spacing: -1px;
-        }
-
-        .logo-icon {
-            width: 32px;
-            height: 32px;
-            background: var(--gradient-main);
-            border-radius: 8px;
-            transform: rotate(15deg);
-        }
-
-        .nav-links a {
-            color: var(--text-med);
+            gap: 12px;
             text-decoration: none;
-            margin-left: 30px;
-            font-size: 0.9rem;
-            font-weight: 500;
-            transition: color 0.3s;
+            color: white;
         }
 
-        .nav-links a:hover { color: var(--accent-primary); }
+        .logo-box {
+            width: 35px; height: 35px;
+            background: var(--accent-gradient);
+            border-radius: 10px;
+            position: relative;
+            transform: rotate(-10deg);
+            box-shadow: 0 0 20px var(--accent-soft);
+        }
+
+        .nav-links { display: flex; gap: 40px; align-items: center; }
+        .nav-links a {
+            text-decoration: none;
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+            font-weight: 500;
+            transition: var(--transition);
+        }
+        .nav-links a:hover { color: var(--accent); }
 
         /* --- Hero Section --- */
         .hero {
-            padding: 120px 0 100px;
+            padding: 220px 0 120px;
             text-align: center;
-            position: relative;
         }
 
-        .status-pill {
+        .hero-badge {
             display: inline-flex;
             align-items: center;
-            gap: 8px;
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            padding: 8px 16px;
+            padding: 8px 20px;
+            background: var(--accent-soft);
+            border: 1px solid var(--accent);
             border-radius: 100px;
-            font-size: 0.85rem;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.8rem;
+            color: var(--accent);
             margin-bottom: 30px;
-        }
-
-        .dot {
-            width: 8px;
-            height: 8px;
-            background: #00ff88;
-            border-radius: 50%;
-            box-shadow: 0 0 10px #00ff88;
-            animation: pulse 2s infinite;
-        }
-
-        @keyframes pulse {
-            0% { transform: scale(0.9); opacity: 1; }
-            50% { transform: scale(1.2); opacity: 0.5; }
-            100% { transform: scale(0.9); opacity: 1; }
+            text-transform: uppercase;
+            letter-spacing: 2px;
         }
 
         .hero h1 {
-            font-size: clamp(3rem, 8vw, 5.5rem);
+            font-size: clamp(3rem, 7vw, 6rem);
+            line-height: 0.95;
+            letter-spacing: -3px;
+            margin-bottom: 35px;
             font-weight: 800;
-            letter-spacing: -2px;
-            line-height: 1;
-            margin-bottom: 24px;
-        }
-
-        .hero h1 span {
-            background: var(--gradient-main);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
         }
 
         .hero p {
-            color: var(--text-med);
             font-size: 1.25rem;
-            max-width: 700px;
-            margin: 0 auto 40px;
+            color: var(--text-secondary);
+            max-width: 750px;
+            margin: 0 auto 50px;
+            line-height: 1.5;
+        }
+
+        .cta-group {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
         }
 
         .btn {
-            padding: 16px 40px;
-            border-radius: 12px;
-            text-decoration: none;
+            padding: 18px 45px;
+            border-radius: 14px;
             font-weight: 700;
-            display: inline-block;
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            transition: var(--transition);
             cursor: pointer;
+            border: none;
         }
 
-        .btn-glow {
-            background: var(--gradient-main);
-            color: black;
-            box-shadow: var(--shadow-glow);
+        .btn-primary {
+            background: var(--accent-gradient);
+            color: #000;
+            box-shadow: 0 15px 35px rgba(0, 210, 255, 0.2);
         }
 
-        .btn-glow:hover {
-            transform: scale(1.05);
-            box-shadow: 0 0 40px rgba(0, 210, 255, 0.4);
+        .btn-primary:hover {
+            transform: translateY(-5px) scale(1.02);
+            box-shadow: 0 20px 45px rgba(0, 210, 255, 0.3);
         }
 
-        .btn-outline {
-            background: transparent;
+        .btn-secondary {
+            background: rgba(255,255,255,0.05);
             color: white;
-            border: 1px solid rgba(255,255,255,0.1);
-            margin-left: 15px;
+            border: 1px solid var(--border);
         }
 
-        .btn-outline:hover { background: rgba(255,255,255,0.05); }
+        .btn-secondary:hover { background: rgba(255,255,255,0.1); }
 
-        /* --- Stats Row --- */
-        .stats-bar {
+        /* --- Detection Tracker --- */
+        .live-tracker {
+            margin-top: 100px;
+            padding: 30px;
+            border-radius: 20px;
+            max-width: 900px;
+            margin-left: auto;
+            margin-right: auto;
+            text-align: left;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .tracker-header {
+            display: flex;
+            justify-content: space-between;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 15px;
+            margin-bottom: 15px;
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+        }
+
+        .tracker-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            font-size: 0.9rem;
+        }
+
+        .status-up { color: #00ff88; }
+
+        /* --- Feature Showcase --- */
+        .showcase { padding: 100px 0; }
+        .section-tag { color: var(--accent); font-weight: 800; font-size: 0.9rem; text-transform: uppercase; display: block; margin-bottom: 15px; }
+
+        .feature-grid {
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            border-top: 1px solid rgba(255,255,255,0.05);
-            margin-top: 80px;
-            padding-top: 40px;
-        }
-
-        .stat-item h2 { font-size: 2rem; color: var(--accent-primary); }
-        .stat-item p { color: var(--text-low); font-size: 0.9rem; text-transform: uppercase; }
-
-        /* --- Features Section --- */
-        .section-header {
-            text-align: center;
-            margin-bottom: 60px;
-        }
-
-        .section-header h2 { font-size: 2.5rem; margin-bottom: 10px; }
-        .section-header p { color: var(--text-med); }
-
-        .features-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
+            grid-template-columns: repeat(12, 1fr);
             gap: 30px;
-            padding-bottom: 100px;
+            margin-top: 60px;
         }
 
         .feature-card {
-            background: var(--bg-card);
-            border: 1px solid rgba(255,255,255,0.03);
-            padding: 40px;
-            border-radius: 24px;
-            transition: 0.3s;
+            grid-column: span 4;
+            padding: 50px 40px;
+            border-radius: 30px;
+            position: relative;
+            overflow: hidden;
         }
 
-        .feature-card:hover {
-            background: #0e0e11;
-            border-color: var(--accent-primary);
-            transform: translateY(-5px);
+        .feature-card i {
+            font-size: 2.5rem;
+            margin-bottom: 30px;
+            display: block;
         }
 
-        .icon-box {
-            width: 50px;
-            height: 50px;
-            background: rgba(0, 210, 255, 0.1);
-            border-radius: 12px;
+        .feature-card h3 { font-size: 1.5rem; margin-bottom: 15px; }
+        .feature-card p { color: var(--text-secondary); line-height: 1.6; }
+
+        .card-large { grid-column: span 8; background: linear-gradient(to right, #0a0a0c, #141418); }
+
+        /* --- Tabbed Interface --- */
+        .tech-tabs {
+            margin-top: 80px;
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .tab-btn {
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--text-secondary);
+            padding: 20px;
+            text-align: left;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .tab-btn.active {
+            background: var(--accent-soft);
+            color: var(--accent);
+            border-left: 4px solid var(--accent);
+        }
+
+        /* --- Pricing Architecture --- */
+        .pricing { padding: 150px 0; background: radial-gradient(circle at center, #0a0a0c 0%, var(--bg-base) 100%); }
+
+        .pricing-table {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 40px;
+            margin-top: 80px;
+        }
+
+        .tier {
+            padding: 60px 40px;
+            border-radius: 35px;
+            display: flex;
+            flex-direction: column;
+            transition: var(--transition);
+        }
+
+        .tier:hover { transform: translateY(-10px); border-color: var(--accent); }
+
+        .tier-name { color: var(--text-secondary); font-size: 1rem; margin-bottom: 20px; }
+        .price { font-size: 4rem; font-weight: 800; margin-bottom: 10px; display: flex; align-items: baseline; }
+        .price span { font-size: 1.2rem; color: var(--text-secondary); font-weight: 400; margin-left: 10px; }
+
+        .feature-list { list-style: none; margin: 40px 0; }
+        .feature-list li {
+            padding: 12px 0;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            font-size: 0.95rem;
+        }
+
+        .icon-check {
+            width: 20px; height: 20px;
+            background: var(--accent);
+            border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            margin-bottom: 25px;
-            color: var(--accent-primary);
-            font-size: 1.5rem;
+            font-size: 0.7rem;
+            color: #000;
         }
 
-        .feature-card h3 { margin-bottom: 15px; font-size: 1.3rem; }
-        .feature-card p { color: var(--text-med); font-size: 0.95rem; }
-
-        /* --- Detailed Feature Matrix --- */
-        .matrix-section {
-            background: #050507;
-            padding: 100px 0;
-            border-radius: 40px;
-            margin-bottom: 100px;
-        }
-
-        .matrix-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 40px;
-        }
-
-        .matrix-table th {
-            text-align: left;
-            padding: 20px;
-            color: var(--text-low);
-            font-size: 0.8rem;
-            text-transform: uppercase;
-        }
-
-        .matrix-table td {
-            padding: 25px 20px;
-            border-top: 1px solid rgba(255,255,255,0.03);
-        }
-
-        .check { color: #00ff88; font-weight: bold; }
-        .tech-tag {
-            background: rgba(255,255,255,0.05);
-            padding: 4px 10px;
-            border-radius: 5px;
-            font-family: 'Space Mono', monospace;
+        .popular { border: 2px solid var(--accent); position: relative; }
+        .popular::after {
+            content: "Recommended";
+            position: absolute;
+            top: -15px; left: 50%;
+            transform: translateX(-50%);
+            background: var(--accent);
+            color: #000;
+            padding: 5px 20px;
+            border-radius: 20px;
             font-size: 0.75rem;
-        }
-
-        /* --- Pricing Section --- */
-        .pricing-section { padding-bottom: 100px; }
-
-        .pricing-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 25px;
-        }
-
-        .price-card {
-            background: var(--bg-card);
-            border-radius: 24px;
-            padding: 50px 40px;
-            border: 1px solid rgba(255,255,255,0.05);
-            position: relative;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .price-card.featured {
-            border: 2px solid var(--accent-primary);
-            box-shadow: var(--shadow-glow);
-            transform: scale(1.05);
-            z-index: 2;
-        }
-
-        .price-card h4 {
-            color: var(--text-low);
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            font-size: 0.8rem;
-            margin-bottom: 10px;
-        }
-
-        .amount {
-            font-size: 3.5rem;
             font-weight: 800;
-            margin-bottom: 30px;
         }
-
-        .amount span { font-size: 1.2rem; color: var(--text-low); font-weight: 400; }
-
-        .price-features {
-            list-style: none;
-            margin-bottom: 40px;
-            flex-grow: 1;
-        }
-
-        .price-features li {
-            padding: 10px 0;
-            color: var(--text-med);
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .price-features li::before {
-            content: "✓";
-            color: var(--accent-primary);
-        }
-
-        /* --- FAQ Section --- */
-        .faq-grid {
-            max-width: 800px;
-            margin: 0 auto;
-        }
-
-        .faq-item {
-            background: var(--bg-card);
-            margin-bottom: 15px;
-            border-radius: 12px;
-            padding: 25px;
-            border-left: 4px solid transparent;
-            transition: 0.3s;
-        }
-
-        .faq-item:hover { border-left-color: var(--accent-primary); }
-        .faq-item h4 { margin-bottom: 10px; color: var(--accent-primary); }
-        .faq-item p { color: var(--text-med); font-size: 0.95rem; }
 
         /* --- Footer --- */
         footer {
-            padding: 100px 0 50px;
-            text-align: center;
-            border-top: 1px solid rgba(255,255,255,0.05);
+            padding: 120px 0 60px;
+            border-top: 1px solid var(--border);
         }
 
-        .footer-logo { margin-bottom: 30px; opacity: 0.5; }
-        .disclaimer {
-            max-width: 600px;
-            margin: 30px auto;
-            color: var(--text-low);
-            font-size: 0.75rem;
+        .footer-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr;
+            gap: 60px;
+            margin-bottom: 80px;
         }
 
-        /* Responsive */
-        @media (max-width: 992px) {
-            .features-grid, .pricing-grid { grid-template-columns: 1fr; }
-            .price-card.featured { transform: scale(1); }
-            .hero h1 { font-size: 3.5rem; }
+        .footer-logo h2 { font-size: 1.8rem; margin-bottom: 20px; }
+        .footer-links h4 { margin-bottom: 25px; color: white; }
+        .footer-links ul { list-style: none; }
+        .footer-links li { margin-bottom: 12px; }
+        .footer-links a { text-decoration: none; color: var(--text-secondary); transition: var(--transition); }
+        .footer-links a:hover { color: var(--accent); }
+
+        .copyright {
+            padding-top: 40px;
+            border-top: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+        }
+
+        @media (max-width: 1024px) {
+            .feature-grid, .pricing-table, .footer-grid { grid-template-columns: 1fr; }
+            .feature-card, .card-large { grid-column: span 1; }
+            .hero h1 { font-size: 4rem; }
         }
     </style>
 </head>
 <body>
 
-    <div class="orb"></div>
+    <div class="grid-bg"></div>
+    <div class="glow-sphere"></div>
 
     <nav>
-        <div class="container" style="display: flex; justify-content: space-between; width: 100%; align-items: center;">
-            <div class="logo">
-                <div class="logo-icon"></div>
-                iCLOCK<span>V2</span>
-            </div>
+        <div class="container nav-content">
+            <a href="#" class="logo">
+                <div class="logo-box"></div>
+                iCLOCK<span>v2</span>
+            </a>
             <div class="nav-links">
                 <a href="#features">Features</a>
                 <a href="#tech">Technology</a>
                 <a href="#pricing">Pricing</a>
-                <a href="#purchase" class="btn btn-glow" style="padding: 10px 25px; margin-left: 20px;">Client Login</a>
+                <a href="#purchase" class="btn btn-primary" style="padding: 12px 30px;">Launch App</a>
             </div>
         </div>
     </nav>
 
-    <main class="container">
-        
-        <section class="hero">
-            <div class="status-pill">
-                <div class="dot"></div>
-                v2.04 Build Online | Undetected by Client-Side
-            </div>
-            <h1>Unlock Your <span>True Potential.</span></h1>
-            <p>The world’s most sophisticated external enhancement for Roblox. Engineered for absolute stealth and pixel-perfect precision.</p>
-            <div class="hero-btns">
-                <a href="#pricing" class="btn btn-glow">Purchase Now</a>
-                <a href="https://discord.gg/iclock" class="btn btn-outline">Join Discord</a>
+    <main>
+        <section class="hero container">
+            <div class="hero-badge">Hardware Emulation Core Active</div>
+            <h1>The New Standard of <br><span class="text-gradient">Silent Dominance.</span></h1>
+            <p>iClock v2 is more than a tool—it's a kernel-level framework designed to bridge the gap between human precision and digital perfection.</p>
+            <div class="cta-group">
+                <a href="#pricing" class="btn btn-primary">Purchase License</a>
+                <a href="#" class="btn btn-secondary">Documentation</a>
             </div>
 
-            <div class="stats-bar">
-                <div class="stat-item">
-                    <h2>2.4k+</h2>
-                    <p>Active Users</p>
+            <div class="live-tracker glass">
+                <div class="tracker-header">
+                    <span>LATEST SYSTEM LOGS</span>
+                    <span class="status-up">● ALL SYSTEMS OPERATIONAL</span>
                 </div>
-                <div class="stat-item">
-                    <h2>0</h2>
-                    <p>Recent Detections</p>
+                <div class="tracker-row">
+                    <span>[16:44:02] Kernel Driver Signature: Verified</span>
+                    <span class="status-up">SECURE</span>
                 </div>
-                <div class="stat-item">
-                    <h2>24/7</h2>
-                    <p>Uptime Guaranteed</p>
+                <div class="tracker-row">
+                    <span>[16:44:05] Memory Obfuscation: Active</span>
+                    <span class="status-up">PROTECTED</span>
+                </div>
+                <div class="tracker-row">
+                    <span>[16:44:12] Cloud Offset Sync: v2.04.1</span>
+                    <span style="color: var(--accent);">UPDATED</span>
+                </div>
+                <div class="tracker-row">
+                    <span style="color: var(--text-secondary);">[16:44:20] User Session established (ID: 4429)...</span>
                 </div>
             </div>
         </section>
 
-        <section id="features" class="features-section">
-            <div class="section-header">
-                <h2>Engineered to Win</h2>
-                <p>Features that redefine what's possible in an external environment.</p>
-            </div>
+        <section id="features" class="showcase container">
+            <span class="section-tag">Feature Suite</span>
+            <h2>Master the Game Loop</h2>
             
-            <div class="features-grid">
-                <div class="feature-card">
-                    <div class="icon-box">🎯</div>
-                    <h3>Vector Smoothing</h3>
-                    <p>Utilizes advanced mathematical curves (Bezier & Catmull-Rom) to ensure mouse movement is indistinguishable from human input.</p>
+            <div class="feature-grid">
+                <div class="feature-card glass">
+                    <span style="font-size: 2rem;">🧠</span>
+                    <h3>Neural Smoothing</h3>
+                    <p>Our proprietary AI-driven smoothing engine learns from your mouse habits to blend corrections seamlessly.</p>
                 </div>
-                <div class="feature-card">
-                    <div class="icon-box">🛡️</div>
-                    <h3>Driver-Level Stealth</h3>
-                    <p>Our custom kernel-mode driver intercepts inputs at the hardware level, leaving zero memory hooks for anti-cheats to follow.</p>
+                <div class="feature-card card-large glass">
+                    <span style="font-size: 2rem;">🛰️</span>
+                    <h3>Hyper-Visor ESP</h3>
+                    <p>Leveraging a unique overlay technique that bypasses screen-capture and streaming software. See players through walls with skeletons, boxes, and health bars—invisible to observers.</p>
                 </div>
-                <div class="feature-card">
-                    <div class="icon-box">⚡</div>
-                    <h3>0ms Latency</h3>
-                    <p>High-frequency polling ensures your inputs are processed the millisecond you need them. No delay, no lag.</p>
+                <div class="feature-card glass">
+                    <span style="font-size: 2rem;">🗝️</span>
+                    <h3>Hardware ID Mask</h3>
+                    <p>Built-in virtualization that prevents your hardware signatures from ever being logged by game servers.</p>
                 </div>
-                <div class="feature-card">
-                    <div class="icon-box">👁️</div>
-                    <h3>Smart ESP Overlay</h3>
-                    <p>Glow, Box, and Skeleton overlays rendered via an external, flickering-free transparent window for maximum safety.</p>
+                <div class="feature-card glass">
+                    <span style="font-size: 2rem;">🧬</span>
+                    <h3>Polymorphic Build</h3>
+                    <p>Every single user gets a unique binary. Your version of iClock has its own signature, making massive detections impossible.</p>
                 </div>
-                <div class="feature-card">
-                    <div class="icon-box">🔄</div>
-                    <h3>Automatic Offsets</h3>
-                    <p>Our cloud database updates game offsets in real-time. No need to download a new client after small game patches.</p>
-                </div>
-                <div class="feature-card">
-                    <div class="icon-box">💻</div>
-                    <h3>Resource Efficient</h3>
-                    <p>Written in optimized C++, iClock consumes less than 1% of your CPU, keeping your FPS at its maximum potential.</p>
+                <div class="feature-card glass">
+                    <span style="font-size: 2rem;">☁️</span>
+                    <h3>Remote Config</h3>
+                    <p>Manage your settings from our mobile dashboard. Change aim fov, smoothing, or visuals on the fly without tabbing out.</p>
                 </div>
             </div>
         </section>
 
-        <section id="tech" class="matrix-section">
+        <section id="pricing" class="pricing">
             <div class="container">
-                <div class="section-header">
-                    <h2>Security Architecture</h2>
-                    <p>How we maintain the industry's lowest detection rate.</p>
-                </div>
-                
-                <table class="matrix-table">
-                    <thead>
-                        <tr>
-                            <th>Security Vector</th>
-                            <th>Traditional Injection</th>
-                            <th>iClock v2 External</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>Memory Scanning</td>
-                            <td style="color: #ff4444;">Vulnerable (Hooked)</td>
-                            <td><span class="check">Safe</span> <span class="tech-tag">Memory-Hidden</span></td>
-                        </tr>
-                        <tr>
-                            <td>DLL Hijacking</td>
-                            <td style="color: #ff4444;">Common Vector</td>
-                            <td><span class="check">Not Applicable</span> <span class="tech-tag">No DLLs</span></td>
-                        </tr>
-                        <tr>
-                            <td>Signature Bans</td>
-                            <td style="color: #ff4444;">Frequent</td>
-                            <td><span class="check">Safe</span> <span class="tech-tag">Polymorphic Engine</span></td>
-                        </tr>
-                        <tr>
-                            <td>Behavioral Analysis</td>
-                            <td style="color: #ff4444;">Flagged (Bot movement)</td>
-                            <td><span class="check">Safe</span> <span class="tech-tag">Humanization v3</span></td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </section>
-
-        <section id="pricing" class="pricing-section">
-            <div class="section-header">
-                <h2>Pricing Plans</h2>
-                <p>Choose the level of power that fits your style.</p>
-            </div>
-
-            <div class="pricing-grid">
-                <div class="price-card">
-                    <h4>Beginner</h4>
-                    <div class="amount">$4.99<span>/wk</span></div>
-                    <ul class="price-features">
-                        <li>Full External Aimbot</li>
-                        <li>Configurable Smoothing</li>
-                        <li>Standard ESP Modules</li>
-                        <li>Community Support</li>
-                    </ul>
-                    <a href="#" class="btn btn-outline" style="text-align: center;">Get Started</a>
+                <div style="text-align: center; margin-bottom: 80px;">
+                    <span class="section-tag">Flexible Access</span>
+                    <h2 style="font-size: 3rem;">Ready to sync?</h2>
                 </div>
 
-                <div class="price-card featured">
-                    <h4>Competitive</h4>
-                    <div class="amount">$14.99<span>/mo</span></div>
-                    <ul class="price-features">
-                        <li>Everything in Weekly</li>
-                        <li>Silent Aim & Triggerbot</li>
-                        <li>Hardware ID Spoofer</li>
-                        <li>Priority Update Access</li>
-                        <li>VIP Discord Lounge</li>
-                    </ul>
-                    <a href="#" class="btn btn-glow" style="text-align: center;">Choose Popular</a>
-                </div>
+                <div class="pricing-table">
+                    <div class="tier glass">
+                        <div class="tier-name">SOLO</div>
+                        <div class="price">$4.99 <span>/ week</span></div>
+                        <p style="color: var(--text-secondary);">Entry-level power for casual dominating.</p>
+                        <ul class="feature-list">
+                            <li><div class="icon-check">✓</div> External Aimbot Core</li>
+                            <li><div class="icon-check">✓</div> 2D Box ESP</li>
+                            <li><div class="icon-check">✓</div> Cloud Settings</li>
+                            <li><div class="icon-check">✓</div> Standard Support</li>
+                        </ul>
+                        <a href="#" class="btn btn-secondary">Get Solo</a>
+                    </div>
 
-                <div class="price-card">
-                    <h4>Master</h4>
-                    <div class="amount">$44.99<span>/life</span></div>
-                    <ul class="price-features">
-                        <li>Lifetime License</li>
-                        <li>Early Beta Features</li>
-                        <li>Developer Private Configs</li>
-                        <li>1-on-1 Setup Support</li>
-                        <li>No Re-subscription Fees</li>
-                    </ul>
-                    <a href="#" class="btn btn-outline" style="text-align: center;">Go Infinite</a>
+                    <div class="tier glass popular">
+                        <div class="tier-name">ELITE</div>
+                        <div class="price">$14.99 <span>/ month</span></div>
+                        <p style="color: var(--text-secondary);">The competitive choice for serious grinders.</p>
+                        <ul class="feature-list">
+                            <li><div class="icon-check">✓</div> Neural Mouse Smoothing</li>
+                            <li><div class="icon-check">✓</div> Full Skeleton & Chams</li>
+                            <li><div class="icon-check">✓</div> HWID Spoofer Integrated</li>
+                            <li><div class="icon-check">✓</div> Priority Discord Access</li>
+                        </ul>
+                        <a href="#" class="btn btn-primary">Get Elite</a>
+                    </div>
+
+                    <div class="tier glass">
+                        <div class="tier-name">LEGACY</div>
+                        <div class="price">$59.99 <span>/ life</span></div>
+                        <p style="color: var(--text-secondary);">One-time sync. Unlimited future updates.</p>
+                        <ul class="feature-list">
+                            <li><div class="icon-check">✓</div> All Future Features</li>
+                            <li><div class="icon-check">✓</div> Beta Feature Access</li>
+                            <li><div class="icon-check">✓</div> Private Developer Builds</li>
+                            <li><div class="icon-check">✓</div> Lifetime Guarantee</li>
+                        </ul>
+                        <a href="#" class="btn btn-secondary">Get Legacy</a>
+                    </div>
                 </div>
             </div>
         </section>
 
-        <section class="faq-section">
-            <div class="section-header">
-                <h2>FAQ</h2>
-            </div>
-            <div class="faq-grid">
-                <div class="faq-item">
-                    <h4>Do I need a second PC?</h4>
-                    <p>No. iClock v2 is designed to run on a single PC using hardware-emulated inputs. While dual-PC setups are supported, they are not required for stealth.</p>
-                </div>
-                <div class="faq-item">
-                    <h4>Will this work with Bloxstrap?</h4>
-                    <p>Yes, we fully support Bloxstrap and all major Roblox launchers. iClock runs independently of the game executable.</p>
-                </div>
-                <div class="faq-item">
-                    <h4>What is the refund policy?</h4>
-                    <p>Due to the digital nature of our product, we offer refunds only if the software is fundamentally incompatible with your hardware after troubleshooting with our staff.</p>
-                </div>
+        <section class="container" style="padding: 100px 0; text-align: center;">
+            <div class="glass" style="padding: 80px; border-radius: 40px; background: var(--accent-gradient);">
+                <h2 style="color: #000; font-size: 3.5rem; margin-bottom: 20px;">Join the Elite.</h2>
+                <p style="color: rgba(0,0,0,0.7); font-weight: 600; margin-bottom: 40px;">Instant delivery. Automatic setup. Zero downtime.</p>
+                <a href="#" class="btn btn-primary" style="background: #000; color: #fff;">Register Now</a>
             </div>
         </section>
-
     </main>
 
-    <footer>
-        <div class="container">
-            <div class="logo footer-logo">
-                <div class="logo-icon"></div>
-                iCLOCK
+    <footer class="container">
+        <div class="footer-grid">
+            <div class="footer-logo">
+                <a href="#" class="logo">
+                    <div class="logo-box"></div>
+                    iCLOCK
+                </a>
+                <p style="color: var(--text-secondary); margin-top: 20px; max-width: 300px;">
+                    Leading the industry in external game enhancement since 2024. Stealth is not an option, it's our foundation.
+                </p>
             </div>
-            <p>Trusted by over 2,000 players worldwide since 2024.</p>
-            <div class="disclaimer">
-                Roblox is a registered trademark of Roblox Corporation. iClock v2 is an independent research project. 
-                Use of third-party software may violate Roblox's Terms of Service. We are not responsible for account actions.
+            <div class="footer-links">
+                <h4>Product</h4>
+                <ul>
+                    <li><a href="#">Status</a></li>
+                    <li><a href="#">Changelog</a></li>
+                    <li><a href="#">Features</a></li>
+                </ul>
             </div>
-            <div style="color: var(--text-low); font-size: 0.8rem; margin-top: 20px;">
-                &copy; 2026 iClock Software Group. All Rights Reserved.
+            <div class="footer-links">
+                <h4>Support</h4>
+                <ul>
+                    <li><a href="#">Discord</a></li>
+                    <li><a href="#">Documentation</a></li>
+                    <li><a href="#">Contact</a></li>
+                </ul>
             </div>
+            <div class="footer-links">
+                <h4>Legal</h4>
+                <ul>
+                    <li><a href="#">Terms of Use</a></li>
+                    <li><a href="#">Refund Policy</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="copyright">
+            <span>&copy; 2026 iClock Systems Group. Not affiliated with Roblox Corp.</span>
+            <span>Latency: 14ms | Server: Global Edge</span>
         </div>
     </footer>
 
