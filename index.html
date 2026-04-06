@@ -20,7 +20,7 @@
             --bg-surface: #0c0714;
             --bg-elevated: #14101f;
             --accent-primary: #b77cff;
-            --accent-glow: rgba(183, 124, 255, 0.45);
+            --accent-glow: rgba(183, 124, 255, 0.5);
             --accent-secondary: #6e42c1;
             --text-main: #f0eff4;
             --text-dim: #aaa5c2;
@@ -41,28 +41,29 @@
 
         /* Custom Cursor */
         #cursor-dot {
-            width: 4px;
-            height: 4px;
+            width: 5px;
+            height: 5px;
             background: var(--accent-primary);
             border-radius: 50%;
             position: fixed;
             pointer-events: none;
             z-index: 10000;
-            box-shadow: 0 0 12px var(--accent-primary);
+            box-shadow: 0 0 15px var(--accent-primary);
         }
         #cursor-ring {
-            width: 38px;
-            height: 38px;
-            border: 1.6px solid var(--accent-primary);
+            width: 42px;
+            height: 42px;
+            border: 1.8px solid var(--accent-primary);
             border-radius: 50%;
             position: fixed;
             pointer-events: none;
             z-index: 9999;
-            transition: transform 0.12s var(--transition-smooth), opacity 0.2s;
-            opacity: 0.6;
+            transition: transform 0.15s var(--transition-smooth), width 0.2s, height 0.2s;
+            opacity: 0.7;
+            box-shadow: 0 0 12px var(--accent-glow);
         }
 
-        /* Canvas Background */
+        /* Canvas Background & Trail */
         #bg-canvas {
             position: fixed;
             top: 0;
@@ -70,6 +71,15 @@
             width: 100%;
             height: 100%;
             z-index: -2;
+        }
+        #trail-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 9997;
         }
         .noise-overlay {
             position: fixed;
@@ -89,7 +99,7 @@
             padding: 0 32px;
         }
 
-        /* Navigation - Centered Logo */
+        /* Navigation */
         nav {
             height: 85px;
             position: sticky;
@@ -105,23 +115,12 @@
             align-items: center;
             height: 100%;
         }
-        .nav-left {
-            flex: 1;
-        }
-        .nav-center {
-            flex: 2;
-            text-align: center;
-        }
-        .nav-right {
-            flex: 1;
-            display: flex;
-            justify-content: flex-end;
-            align-items: center;
-            gap: 1.5rem;
-        }
+        .nav-left { flex: 1; }
+        .nav-center { flex: 2; text-align: center; }
+        .nav-right { flex: 1; display: flex; justify-content: flex-end; align-items: center; gap: 1.8rem; }
         .logo {
             font-weight: 800;
-            font-size: 1.6rem;
+            font-size: 1.5rem;
             letter-spacing: -1px;
             background: linear-gradient(135deg, #ffffff 30%, var(--accent-primary) 80%);
             -webkit-background-clip: text;
@@ -129,57 +128,16 @@
             color: transparent;
             text-decoration: none;
         }
-        .logo span {
-            background: none;
-            -webkit-background-clip: unset;
-            background-clip: unset;
-            color: var(--accent-primary);
-        }
-        .nav-links {
-            display: flex;
-            align-items: center;
-            gap: 2rem;
-        }
-        .nav-links a {
-            color: var(--text-dim);
-            text-decoration: none;
-            font-weight: 600;
-            transition: 0.2s;
-            font-size: 0.9rem;
-        }
-        .nav-links a:hover { color: var(--accent-primary); }
-        .cart-icon {
-            position: relative;
-            cursor: pointer;
-            font-size: 1.4rem;
-        }
-        .cart-count {
-            position: absolute;
-            top: -8px;
-            right: -12px;
-            background: var(--accent-primary);
-            color: #010005;
-            font-size: 0.7rem;
-            font-weight: bold;
-            border-radius: 50%;
-            width: 18px;
-            height: 18px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        .discord-btn {
-            background: linear-gradient(145deg, #5865F2, #4752c4);
-            padding: 8px 22px !important;
-            border-radius: 40px;
-            color: white !important;
-        }
+        .logo span { color: var(--accent-primary); background: none; -webkit-background-clip: unset; }
+        .nav-links { display: flex; align-items: center; gap: 2rem; }
+        .nav-links a { color: var(--text-dim); text-decoration: none; font-weight: 600; transition: 0.2s; font-size: 0.9rem; }
+        .nav-links a:hover { color: var(--accent-primary); text-shadow: 0 0 8px var(--accent-glow); }
+        .cart-icon { position: relative; cursor: pointer; font-size: 1.4rem; }
+        .cart-count { position: absolute; top: -8px; right: -12px; background: var(--accent-primary); color: #010005; font-size: 0.7rem; font-weight: bold; border-radius: 50%; width: 18px; height: 18px; display: flex; align-items: center; justify-content: center; }
+        .discord-btn { background: linear-gradient(145deg, #5865F2, #4752c4); padding: 8px 22px !important; border-radius: 40px; color: white !important; }
 
         /* Hero */
-        .hero {
-            padding: 120px 0 80px;
-            text-align: center;
-        }
+        .hero { padding: 120px 0 80px; text-align: center; }
         .status-badge {
             display: inline-flex;
             background: rgba(183, 124, 255, 0.08);
@@ -192,28 +150,10 @@
             margin-bottom: 35px;
             animation: pulse 2s infinite;
         }
-        @keyframes pulse {
-            0% { box-shadow: 0 0 0 0 var(--accent-glow); }
-            70% { box-shadow: 0 0 0 8px rgba(157, 78, 255, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(157, 78, 255, 0); }
-        }
-        .hero h1 {
-            font-size: clamp(3rem, 8vw, 5.5rem);
-            font-weight: 800;
-            line-height: 1.05;
-            letter-spacing: -3px;
-            margin-bottom: 28px;
-        }
-        .hero h1 .accent-text {
-            color: var(--accent-primary);
-            text-shadow: 0 0 20px var(--accent-glow);
-        }
-        .hero p {
-            font-size: 1.2rem;
-            color: var(--text-dim);
-            max-width: 620px;
-            margin: 0 auto 45px;
-        }
+        @keyframes pulse { 0% { box-shadow: 0 0 0 0 var(--accent-glow); } 70% { box-shadow: 0 0 0 8px rgba(157, 78, 255, 0); } 100% { box-shadow: 0 0 0 0 rgba(157, 78, 255, 0); } }
+        .hero h1 { font-size: clamp(3rem, 8vw, 5.5rem); font-weight: 800; line-height: 1.05; letter-spacing: -3px; margin-bottom: 28px; }
+        .hero h1 .accent-text { color: var(--accent-primary); text-shadow: 0 0 20px var(--accent-glow); }
+        .hero p { font-size: 1.2rem; color: var(--text-dim); max-width: 620px; margin: 0 auto 45px; }
         .btn-primary {
             background: linear-gradient(105deg, var(--accent-primary), #9b4dff);
             padding: 14px 38px;
@@ -228,29 +168,11 @@
         .btn-primary:hover { transform: scale(1.03); box-shadow: 0 12px 28px rgba(157, 78, 255, 0.5); }
 
         /* Product Grid */
-        .products-section {
-            padding: 80px 0;
-        }
-        .section-header {
-            text-align: center;
-            margin-bottom: 60px;
-        }
-        .section-header h2 {
-            font-size: 2.8rem;
-            background: linear-gradient(130deg, #fff, var(--accent-primary));
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-        }
-        .section-header p {
-            color: var(--text-dim);
-            margin-top: 12px;
-        }
-        .product-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-            gap: 30px;
-        }
+        .products-section { padding: 80px 0; }
+        .section-header { text-align: center; margin-bottom: 60px; }
+        .section-header h2 { font-size: 2.8rem; background: linear-gradient(130deg, #fff, var(--accent-primary)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+        .section-header p { color: var(--text-dim); margin-top: 12px; }
+        .product-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 30px; }
         .product-card {
             background: rgba(12, 7, 20, 0.7);
             backdrop-filter: blur(8px);
@@ -260,42 +182,13 @@
             transition: 0.3s;
             cursor: pointer;
         }
-        .product-card:hover {
-            transform: translateY(-8px);
-            border-color: var(--accent-primary);
-            box-shadow: 0 20px 35px -12px black;
-        }
-        .product-badge {
-            display: inline-block;
-            background: var(--accent-primary);
-            padding: 4px 12px;
-            border-radius: 40px;
-            font-size: 0.7rem;
-            font-weight: bold;
-            color: #010005;
-        }
-        .product-price {
-            font-size: 2.2rem;
-            font-weight: 800;
-            margin: 20px 0;
-        }
-        .btn-add {
-            width: 100%;
-            padding: 12px;
-            background: rgba(255,255,255,0.05);
-            border: 1px solid var(--border-subtle);
-            border-radius: 40px;
-            color: white;
-            font-weight: 600;
-            cursor: pointer;
-            transition: 0.2s;
-        }
-        .btn-add:hover {
-            background: var(--accent-primary);
-            color: black;
-        }
+        .product-card:hover { transform: translateY(-8px); border-color: var(--accent-primary); box-shadow: 0 20px 35px -12px black; }
+        .product-badge { display: inline-block; background: var(--accent-primary); padding: 4px 12px; border-radius: 40px; font-size: 0.7rem; font-weight: bold; color: #010005; }
+        .product-price { font-size: 2.2rem; font-weight: 800; margin: 20px 0; }
+        .btn-add { width: 100%; padding: 12px; background: rgba(255,255,255,0.05); border: 1px solid var(--border-subtle); border-radius: 40px; color: white; font-weight: 600; cursor: pointer; transition: 0.2s; }
+        .btn-add:hover { background: var(--accent-primary); color: black; }
 
-        /* Modal / Preview */
+        /* Modal */
         .modal {
             display: none;
             position: fixed;
@@ -309,36 +202,11 @@
             justify-content: center;
             align-items: center;
         }
-        .modal-content {
-            background: var(--bg-surface);
-            border: 1px solid var(--accent-primary);
-            border-radius: 40px;
-            max-width: 500px;
-            width: 90%;
-            padding: 40px;
-            position: relative;
-            animation: fadeUp 0.3s ease;
-        }
-        @keyframes fadeUp {
-            from { transform: translateY(30px); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
-        }
-        .close-modal {
-            position: absolute;
-            top: 20px;
-            right: 25px;
-            font-size: 28px;
-            cursor: pointer;
-            color: var(--text-dim);
-        }
-        .preview-features {
-            list-style: none;
-            margin: 20px 0;
-        }
-        .preview-features li {
-            padding: 8px 0;
-            border-bottom: 1px solid var(--border-subtle);
-        }
+        .modal-content { background: var(--bg-surface); border: 1px solid var(--accent-primary); border-radius: 40px; max-width: 500px; width: 90%; padding: 40px; position: relative; animation: fadeUp 0.3s ease; }
+        @keyframes fadeUp { from { transform: translateY(30px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        .close-modal { position: absolute; top: 20px; right: 25px; font-size: 28px; cursor: pointer; color: var(--text-dim); }
+        .preview-features { list-style: none; margin: 20px 0; }
+        .preview-features li { padding: 8px 0; border-bottom: 1px solid var(--border-subtle); }
 
         /* Cart Sidebar */
         .cart-sidebar {
@@ -357,56 +225,16 @@
             flex-direction: column;
             box-shadow: -5px 0 30px rgba(0,0,0,0.8);
         }
-        .cart-sidebar.open {
-            right: 0;
-        }
-        .cart-header {
-            display: flex;
-            justify-content: space-between;
-            font-size: 1.5rem;
-            font-weight: bold;
-            margin-bottom: 30px;
-        }
-        .cart-items {
-            flex: 1;
-            overflow-y: auto;
-        }
-        .cart-item {
-            display: flex;
-            justify-content: space-between;
-            padding: 15px 0;
-            border-bottom: 1px solid var(--border-subtle);
-        }
-        .cart-total {
-            margin-top: 20px;
-            padding-top: 20px;
-            border-top: 2px solid var(--accent-primary);
-            font-size: 1.3rem;
-            font-weight: bold;
-        }
-        .checkout-btn {
-            background: var(--accent-primary);
-            border: none;
-            padding: 15px;
-            border-radius: 50px;
-            font-weight: bold;
-            margin-top: 20px;
-            cursor: pointer;
-            transition: 0.2s;
-        }
-        .remove-item {
-            color: var(--danger);
-            cursor: pointer;
-            margin-left: 15px;
-        }
+        .cart-sidebar.open { right: 0; }
+        .cart-header { display: flex; justify-content: space-between; font-size: 1.5rem; font-weight: bold; margin-bottom: 30px; }
+        .cart-items { flex: 1; overflow-y: auto; }
+        .cart-item { display: flex; justify-content: space-between; padding: 15px 0; border-bottom: 1px solid var(--border-subtle); }
+        .cart-total { margin-top: 20px; padding-top: 20px; border-top: 2px solid var(--accent-primary); font-size: 1.3rem; font-weight: bold; }
+        .checkout-btn { background: var(--accent-primary); border: none; padding: 15px; border-radius: 50px; font-weight: bold; margin-top: 20px; cursor: pointer; transition: 0.2s; }
+        .remove-item { color: var(--danger); cursor: pointer; margin-left: 15px; }
 
         /* Features Grid */
-        .features-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 25px;
-            margin: 40px 0;
-        }
+        .features-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 25px; margin: 40px 0; }
         .feature-card {
             background: rgba(12, 7, 20, 0.6);
             border-radius: 28px;
@@ -414,100 +242,40 @@
             backdrop-filter: blur(4px);
             border: 1px solid var(--border-subtle);
             transition: 0.3s;
+            position: relative;
+            overflow: hidden;
         }
-        .feature-card:hover {
-            border-color: var(--accent-primary);
-            transform: translateY(-5px);
-        }
-        .feature-card h4 {
-            font-size: 1.3rem;
-            margin-bottom: 15px;
-        }
-        .feature-card p {
-            color: var(--text-dim);
-        }
+        .feature-card:hover { border-color: var(--accent-primary); transform: translateY(-5px); background: rgba(20, 16, 31, 0.8); }
+        .feature-card h4 { font-size: 1.3rem; margin-bottom: 15px; }
+        .feature-card p { color: var(--text-dim); }
 
-        /* FAQ Section Enhanced */
-        .faq-section {
-            padding: 80px 0 100px;
-            background: radial-gradient(ellipse at 50% 0%, rgba(110, 66, 193, 0.08), transparent);
-        }
-        .faq-grid {
-            max-width: 900px;
-            margin: 0 auto;
-            display: flex;
-            flex-direction: column;
-            gap: 16px;
-        }
-        .faq-item {
-            background: rgba(12, 7, 20, 0.6);
-            backdrop-filter: blur(8px);
-            border: 1px solid var(--border-subtle);
-            border-radius: 24px;
-            overflow: hidden;
-            transition: 0.25s;
-        }
-        .faq-question {
-            width: 100%;
-            background: transparent;
-            border: none;
-            padding: 24px 28px;
-            font-size: 1.1rem;
-            font-weight: 600;
-            color: white;
-            text-align: left;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            cursor: pointer;
-            font-family: 'Inter', sans-serif;
-        }
-        .faq-question i {
-            transition: transform 0.3s;
-            color: var(--accent-primary);
-        }
-        .faq-item.open .faq-question i {
-            transform: rotate(180deg);
-        }
-        .faq-answer {
-            max-height: 0;
-            padding: 0 28px;
-            color: var(--text-dim);
-            overflow: hidden;
-            transition: max-height 0.45s var(--transition-smooth), padding 0.3s;
-        }
-        .faq-item.open .faq-answer {
-            max-height: 220px;
-            padding-bottom: 24px;
-        }
+        /* FAQ */
+        .faq-section { padding: 80px 0 100px; background: radial-gradient(ellipse at 50% 0%, rgba(110, 66, 193, 0.08), transparent); }
+        .faq-grid { max-width: 900px; margin: 0 auto; display: flex; flex-direction: column; gap: 16px; }
+        .faq-item { background: rgba(12, 7, 20, 0.6); backdrop-filter: blur(8px); border: 1px solid var(--border-subtle); border-radius: 24px; overflow: hidden; }
+        .faq-question { width: 100%; background: transparent; border: none; padding: 24px 28px; font-size: 1.1rem; font-weight: 600; color: white; text-align: left; display: flex; justify-content: space-between; align-items: center; cursor: pointer; }
+        .faq-question i { transition: transform 0.3s; color: var(--accent-primary); }
+        .faq-item.open .faq-question i { transform: rotate(180deg); }
+        .faq-answer { max-height: 0; padding: 0 28px; color: var(--text-dim); overflow: hidden; transition: max-height 0.45s var(--transition-smooth), padding 0.3s; }
+        .faq-item.open .faq-answer { max-height: 220px; padding-bottom: 24px; }
 
         @media (max-width: 900px) {
             .cart-sidebar { width: 100%; right: -100%; }
-            #cursor-dot, #cursor-ring { display: none; }
+            #cursor-dot, #cursor-ring, #trail-canvas { display: none; }
             * { cursor: auto !important; }
             .features-grid { grid-template-columns: 1fr; }
             .nav-links { gap: 1rem; }
-            .nav-links a { font-size: 0.8rem; }
-            .discord-btn { padding: 6px 14px !important; }
         }
         .reveal { opacity: 0; transform: translateY(30px); transition: 0.7s ease; }
         .reveal.active { opacity: 1; transform: translateY(0); }
-        
-        footer {
-            text-align: center;
-            padding: 50px;
-            border-top: 1px solid var(--border-subtle);
-            color: var(--text-dim);
-        }
-        footer a {
-            color: var(--accent-primary);
-            text-decoration: none;
-        }
+        footer { text-align: center; padding: 50px; border-top: 1px solid var(--border-subtle); color: var(--text-dim); }
+        footer a { color: var(--accent-primary); text-decoration: none; }
     </style>
 </head>
 <body>
 
     <canvas id="bg-canvas"></canvas>
+    <canvas id="trail-canvas"></canvas>
     <div class="noise-overlay"></div>
     <div id="cursor-dot"></div>
     <div id="cursor-ring"></div>
@@ -553,14 +321,13 @@
             <h2>Driver-level superiority</h2>
             <p>Engineered for performance and stealth</p>
         </div>
-        <div class="features-grid">
+        <div class="features-grid" id="featuresGrid">
             <div class="feature-card"><h4>⚙️ Kernel Emulation</h4><p>Signed driver mimics HID stack — no memory manipulation, zero detection vectors.</p></div>
             <div class="feature-card"><h4>🛡️ Hyperion Ready</h4><p>Dynamic bypass with randomized callbacks. Weekly updates ensure stability against patches.</p></div>
             <div class="feature-card"><h4>⚡ Sub-1ms Latency</h4><p>C++ driver with zero-copy polling. Feel the raw speed of hardware-grade input.</p></div>
         </div>
     </section>
 
-    <!-- FAQ Section (expanded) -->
     <section id="faq" class="faq-section container reveal">
         <div class="section-header">
             <h2>Frequently Asked Questions</h2>
@@ -583,10 +350,7 @@
 
     <!-- Cart Sidebar -->
     <div id="cartSidebar" class="cart-sidebar">
-        <div class="cart-header">
-            <span>🛒 Your Cart</span>
-            <i class="fas fa-times" id="closeCart" style="cursor:pointer;"></i>
-        </div>
+        <div class="cart-header"><span>🛒 Your Cart</span><i class="fas fa-times" id="closeCart" style="cursor:pointer;"></i></div>
         <div id="cartItemsList" class="cart-items"></div>
         <div class="cart-total" id="cartTotal">Total: $0.00</div>
         <button id="checkoutBtn" class="checkout-btn">Proceed to Checkout 🚀</button>
@@ -595,32 +359,28 @@
 
     <footer>
         <p>© 2026 iClock Systems — Advanced Driver Research. All transactions encrypted.</p>
-        <p style="margin-top: 12px;"><i class="fab fa-discord"></i> Join our community: <a href="https://discord.gg/9rTbwJsg" target="_blank">discord.gg/iclock</a></p>
+        <p style="margin-top: 12px;"><i class="fab fa-discord"></i> Join us: <a href="https://discord.gg/9rTbwJsg" target="_blank">discord.gg/iclock</a></p>
     </footer>
 
     <script>
-        // Product Database
+        // PRODUCTS & CART LOGIC
         const PRODUCTS = [
             { id: 1, name: "Trial License", price: 4.99, period: "/week", badge: "WEEKLY", desc: "Core aimbot + ESP. Perfect for testing compatibility.", features: ["Core Aimbot", "2D ESP", "Basic Driver Loader", "Weekly Key Renewal"] },
             { id: 2, name: "Professional", price: 14.99, period: "/month", badge: "MOST POPULAR", desc: "Full aim assist + HWID Spoofer integrated. Priority support.", features: ["Advanced Prediction", "HWID Spoofer", "Color Aimbot", "24/7 Priority Support"] },
             { id: 3, name: "Legacy Lifetime", price: 49.99, period: "lifetime", badge: "BEST VALUE", desc: "Permanent access + dev beta builds. Never expires.", features: ["Lifetime License", "Dev Branch Access", "Private Beta Features", "Priority Updates"] }
         ];
-
-        // FAQ Data (expanded)
         const FAQS = [
             { q: "What anti-cheats does iClock v2 bypass?", a: "iClock v2 specifically targets Hyperion (Roblox) and works against EAC/BattlEye when using external driver mode. No memory writes, only input simulation." },
-            { q: "Is the delivery fully automatic?", a: "Yes. After purchase, you'll receive a unique key instantly in your Discord DMs from our bot. Redeem inside iClock launcher." },
-            { q: "Does this require disabling secure boot?", a: "No, iClock driver uses a valid EV certificate and loads with secure boot enabled. Just disable memory integrity if needed." },
-            { q: "What's the refund policy?", a: "Due to the nature of digital licenses, we don't offer refunds but provide 24h test support to ensure compatibility." },
-            { q: "How often are updates released?", a: "We push driver updates weekly or after major game patches. Professional and Lifetime users get priority updates." },
-            { q: "Can I use iClock on multiple PCs?", a: "Licenses are HWID-locked, but you can reset HWID once every 30 days via Discord support." }
+            { q: "Is the delivery fully automatic?", a: "Yes. After purchase, you'll receive a unique key instantly in your Discord DMs from our bot." },
+            { q: "Does this require disabling secure boot?", a: "No, iClock driver uses a valid EV certificate and loads with secure boot enabled." },
+            { q: "What's the refund policy?", a: "Due to digital license nature, we offer 24h test support to ensure compatibility." },
+            { q: "How often are updates released?", a: "Weekly driver updates or after major game patches." },
+            { q: "Can I use iClock on multiple PCs?", a: "Licenses are HWID-locked, with 1 reset allowed every 30 days." }
         ];
-
         let cart = [];
         
         function renderProducts() {
             const grid = document.getElementById('productGrid');
-            if(!grid) return;
             grid.innerHTML = PRODUCTS.map(p => `
                 <div class="product-card" data-id="${p.id}">
                     <div class="product-badge" style="background:${p.id === 2 ? '#b77cff' : '#6e42c1'}">${p.badge}</div>
@@ -630,36 +390,18 @@
                     <button class="btn-add preview-btn" data-id="${p.id}">Quick Preview</button>
                 </div>
             `).join('');
-            
-            document.querySelectorAll('.preview-btn').forEach(btn => {
-                btn.addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    const id = parseInt(btn.dataset.id);
-                    openPreview(id);
-                });
-            });
-            document.querySelectorAll('.product-card').forEach(card => {
-                card.addEventListener('click', (e) => {
-                    if(e.target.classList.contains('preview-btn')) return;
-                    const id = parseInt(card.dataset.id);
-                    openPreview(id);
-                });
-            });
+            document.querySelectorAll('.preview-btn').forEach(btn => btn.addEventListener('click', (e) => { e.stopPropagation(); openPreview(parseInt(btn.dataset.id)); }));
+            document.querySelectorAll('.product-card').forEach(card => card.addEventListener('click', () => openPreview(parseInt(card.dataset.id))));
         }
         
         function renderFaqs() {
-            const faqContainer = document.getElementById('faqContainer');
-            if(!faqContainer) return;
-            faqContainer.innerHTML = FAQS.map((faq, idx) => `
+            const container = document.getElementById('faqContainer');
+            container.innerHTML = FAQS.map((faq, idx) => `
                 <div class="faq-item ${idx === 0 ? 'open' : ''}">
-                    <button class="faq-question">
-                        ${faq.q}
-                        <i class="fas fa-chevron-down"></i>
-                    </button>
+                    <button class="faq-question">${faq.q}<i class="fas fa-chevron-down"></i></button>
                     <div class="faq-answer">${faq.a}</div>
                 </div>
             `).join('');
-            
             document.querySelectorAll('.faq-item').forEach(item => {
                 const btn = item.querySelector('.faq-question');
                 btn.addEventListener('click', () => {
@@ -670,187 +412,161 @@
             });
         }
         
-        let currentPreviewProduct = null;
+        let currentPreview = null;
         function openPreview(id) {
-            const product = PRODUCTS.find(p => p.id === id);
-            if(!product) return;
-            currentPreviewProduct = product;
-            document.getElementById('previewTitle').innerText = product.name;
-            document.getElementById('previewDesc').innerText = product.desc;
-            document.getElementById('previewPrice').innerHTML = `$${product.price} <span style="font-size:1rem;">${product.period}</span>`;
-            const featuresList = document.getElementById('previewFeatures');
-            featuresList.innerHTML = product.features.map(f => `<li><i class="fas fa-check-circle" style="color:var(--accent-primary);"></i> ${f}</li>`).join('');
+            currentPreview = PRODUCTS.find(p => p.id === id);
+            document.getElementById('previewTitle').innerText = currentPreview.name;
+            document.getElementById('previewDesc').innerText = currentPreview.desc;
+            document.getElementById('previewPrice').innerHTML = `$${currentPreview.price} <span style="font-size:1rem;">${currentPreview.period}</span>`;
+            document.getElementById('previewFeatures').innerHTML = currentPreview.features.map(f => `<li><i class="fas fa-check-circle" style="color:var(--accent-primary);"></i> ${f}</li>`).join('');
             document.getElementById('previewModal').style.display = 'flex';
         }
-        
         function addToCart(product) {
-            const existing = cart.find(item => item.id === product.id);
-            if(existing) {
-                existing.quantity += 1;
-            } else {
-                cart.push({ ...product, quantity: 1 });
-            }
+            const existing = cart.find(i => i.id === product.id);
+            if(existing) existing.quantity++;
+            else cart.push({ ...product, quantity: 1 });
             updateCartUI();
             closeModal();
             document.getElementById('cartSidebar').classList.add('open');
         }
-        
         function updateCartUI() {
-            const cartContainer = document.getElementById('cartItemsList');
+            const container = document.getElementById('cartItemsList');
             const totalEl = document.getElementById('cartTotal');
-            const cartCountSpan = document.getElementById('cartCount');
-            if(!cartContainer) return;
-            if(cart.length === 0) {
-                cartContainer.innerHTML = '<div style="text-align:center; color:var(--text-dim);">Cart is empty</div>';
-                totalEl.innerText = `Total: $0.00`;
-                cartCountSpan.innerText = '0';
-                return;
-            }
+            const countSpan = document.getElementById('cartCount');
+            if(cart.length === 0) { container.innerHTML = '<div style="text-align:center; color:var(--text-dim);">Cart is empty</div>'; totalEl.innerText = 'Total: $0.00'; countSpan.innerText = '0'; return; }
             let total = 0;
-            cartContainer.innerHTML = cart.map(item => {
+            container.innerHTML = cart.map(item => {
                 const itemTotal = item.price * item.quantity;
                 total += itemTotal;
-                return `
-                    <div class="cart-item">
-                        <div><strong>${item.name}</strong> x${item.quantity}<br><span style="font-size:0.8rem;">$${item.price} ea</span></div>
-                        <div>$${itemTotal.toFixed(2)} <span class="remove-item" data-id="${item.id}"><i class="fas fa-trash-alt"></i></span></div>
-                    </div>
-                `;
+                return `<div class="cart-item"><div><strong>${item.name}</strong> x${item.quantity}<br><span style="font-size:0.8rem;">$${item.price} ea</span></div><div>$${itemTotal.toFixed(2)} <span class="remove-item" data-id="${item.id}"><i class="fas fa-trash-alt"></i></span></div></div>`;
             }).join('');
             totalEl.innerText = `Total: $${total.toFixed(2)}`;
-            const totalQty = cart.reduce((sum, i) => sum + i.quantity, 0);
-            cartCountSpan.innerText = totalQty;
-            
-            document.querySelectorAll('.remove-item').forEach(el => {
-                el.addEventListener('click', (e) => {
-                    const id = parseInt(el.dataset.id);
-                    cart = cart.filter(item => item.id !== id);
-                    updateCartUI();
-                });
-            });
+            countSpan.innerText = cart.reduce((s,i) => s + i.quantity, 0);
+            document.querySelectorAll('.remove-item').forEach(el => el.addEventListener('click', (e) => { cart = cart.filter(i => i.id !== parseInt(el.dataset.id)); updateCartUI(); }));
         }
-        
-        function closeModal() {
-            document.getElementById('previewModal').style.display = 'none';
-        }
-        
-        function checkout() {
-            if(cart.length === 0) {
-                alert("Your cart is empty. Add a license first.");
-                return;
-            }
-            const total = cart.reduce((sum, i) => sum + (i.price * i.quantity), 0).toFixed(2);
-            alert(`✅ Order placed! Total: $${total}\nLicense keys will be instantly sent to your Discord DMs. Thank you for choosing iClock.`);
-            cart = [];
-            updateCartUI();
-            document.getElementById('cartSidebar').classList.remove('open');
-        }
+        function closeModal() { document.getElementById('previewModal').style.display = 'none'; }
+        function checkout() { if(cart.length === 0) alert("Cart empty."); else { alert(`✅ Order placed! Total: $${cart.reduce((s,i)=>s+(i.price*i.quantity),0).toFixed(2)}\nLicense keys sent to Discord.`); cart = []; updateCartUI(); document.getElementById('cartSidebar').classList.remove('open'); } }
         
         document.addEventListener('DOMContentLoaded', () => {
-            renderProducts();
-            renderFaqs();
-            document.getElementById('modalAddToCart').addEventListener('click', () => {
-                if(currentPreviewProduct) addToCart(currentPreviewProduct);
-            });
+            renderProducts(); renderFaqs();
+            document.getElementById('modalAddToCart').addEventListener('click', () => { if(currentPreview) addToCart(currentPreview); });
             document.querySelector('.close-modal').addEventListener('click', closeModal);
-            window.addEventListener('click', (e) => {
-                if(e.target === document.getElementById('previewModal')) closeModal();
-            });
-            document.getElementById('cartIcon').addEventListener('click', () => {
-                document.getElementById('cartSidebar').classList.toggle('open');
-            });
-            document.getElementById('closeCart').addEventListener('click', () => {
-                document.getElementById('cartSidebar').classList.remove('open');
-            });
+            window.addEventListener('click', (e) => { if(e.target === document.getElementById('previewModal')) closeModal(); });
+            document.getElementById('cartIcon').addEventListener('click', () => document.getElementById('cartSidebar').classList.toggle('open'));
+            document.getElementById('closeCart').addEventListener('click', () => document.getElementById('cartSidebar').classList.remove('open'));
             document.getElementById('checkoutBtn').addEventListener('click', checkout);
         });
         
-        // Advanced Canvas Particle Network
-        const canvas = document.getElementById('bg-canvas');
-        const ctx = canvas.getContext('2d');
-        let width, height, particles = [];
-        function resizeCanvas() {
-            width = window.innerWidth;
-            height = window.innerHeight;
-            canvas.width = width;
-            canvas.height = height;
-            initParticles();
-        }
-        function initParticles() {
-            particles = [];
-            for(let i=0;i<100;i++) {
-                particles.push({
-                    x: Math.random() * width,
-                    y: Math.random() * height,
-                    vx: (Math.random() - 0.5) * 0.25,
-                    vy: (Math.random() - 0.5) * 0.25,
-                    size: Math.random() * 2.2 + 0.8,
-                    alpha: Math.random() * 0.5 + 0.2
-                });
+        // --- CURSOR TRAIL: SMOOTH CURVING PARTICLE TRAIL ---
+        const trailCanvas = document.getElementById('trail-canvas');
+        const trailCtx = trailCanvas.getContext('2d');
+        let trailWidth, trailHeight;
+        let trailPoints = []; // stores {x, y}
+        const MAX_POINTS = 50;
+        
+        function resizeTrail() { trailWidth = window.innerWidth; trailHeight = window.innerHeight; trailCanvas.width = trailWidth; trailCanvas.height = trailHeight; }
+        
+        function addTrailPoint(x, y) { trailPoints.unshift({ x, y }); if (trailPoints.length > MAX_POINTS) trailPoints.pop(); }
+        
+        function drawTrail() {
+            if (!trailCtx) return;
+            trailCtx.clearRect(0, 0, trailWidth, trailHeight);
+            if (trailPoints.length < 2) return;
+            
+            // Draw smooth curved line
+            trailCtx.beginPath();
+            trailCtx.moveTo(trailPoints[0].x, trailPoints[0].y);
+            for (let i = 0; i < trailPoints.length - 2; i++) {
+                const p1 = trailPoints[i];
+                const p2 = trailPoints[i+1];
+                const p3 = trailPoints[i+2];
+                const xc = (p2.x + p3.x) / 2;
+                const yc = (p2.y + p3.y) / 2;
+                trailCtx.quadraticCurveTo(p2.x, p2.y, xc, yc);
             }
+            trailCtx.lineTo(trailPoints[trailPoints.length-1].x, trailPoints[trailPoints.length-1].y);
+            trailCtx.strokeStyle = `rgba(183, 124, 255, 0.7)`;
+            trailCtx.lineWidth = 2.8;
+            trailCtx.shadowBlur = 14;
+            trailCtx.shadowColor = '#b77cff';
+            trailCtx.stroke();
+            
+            // Draw glowing particles along trail
+            for (let i = 0; i < trailPoints.length; i++) {
+                const p = trailPoints[i];
+                const opacity = 0.55 * (1 - i / MAX_POINTS);
+                trailCtx.beginPath();
+                trailCtx.arc(p.x, p.y, 2.5 * (1 - i/MAX_POINTS) + 0.5, 0, Math.PI * 2);
+                trailCtx.fillStyle = `rgba(183, 124, 255, ${opacity})`;
+                trailCtx.fill();
+                trailCtx.shadowBlur = 8;
+            }
+            trailCtx.shadowBlur = 0;
+            requestAnimationFrame(() => {});
         }
+        
+        let lastMouseX = 0, lastMouseY = 0;
+        document.addEventListener('mousemove', (e) => {
+            const x = e.clientX, y = e.clientY;
+            addTrailPoint(x, y);
+            lastMouseX = x; lastMouseY = y;
+            const dot = document.getElementById('cursor-dot');
+            const ring = document.getElementById('cursor-ring');
+            dot.style.transform = `translate(${x - 2.5}px, ${y - 2.5}px)`;
+            ring.style.transform = `translate(${x - 21}px, ${y - 21}px)`;
+        });
+        
+        function animateTrail() { drawTrail(); requestAnimationFrame(animateTrail); }
+        window.addEventListener('resize', resizeTrail);
+        resizeTrail(); animateTrail();
+        
+        // Background particle system (enhanced)
+        const bgCanvas = document.getElementById('bg-canvas');
+        const bgCtx = bgCanvas.getContext('2d');
+        let bgWidth, bgHeight, particles = [];
+        function resizeBg() { bgWidth = window.innerWidth; bgHeight = window.innerHeight; bgCanvas.width = bgWidth; bgCanvas.height = bgHeight; initBgParticles(); }
+        function initBgParticles() { particles = []; for(let i=0;i<140;i++) { particles.push({ x: Math.random() * bgWidth, y: Math.random() * bgHeight, vx: (Math.random() - 0.5) * 0.28, vy: (Math.random() - 0.5) * 0.28, size: Math.random() * 2.2 + 0.6, alpha: Math.random() * 0.5 + 0.15 }); } }
         function drawBg() {
-            if(!ctx) return;
-            ctx.clearRect(0, 0, width, height);
-            const grad = ctx.createLinearGradient(0, 0, width*0.8, height);
-            grad.addColorStop(0, '#02000a');
-            grad.addColorStop(1, '#0b041f');
-            ctx.fillStyle = grad;
-            ctx.fillRect(0, 0, width, height);
+            if(!bgCtx) return;
+            bgCtx.clearRect(0, 0, bgWidth, bgHeight);
+            const grad = bgCtx.createLinearGradient(0, 0, bgWidth*0.8, bgHeight);
+            grad.addColorStop(0, '#02000a'); grad.addColorStop(1, '#0b041f');
+            bgCtx.fillStyle = grad; bgCtx.fillRect(0, 0, bgWidth, bgHeight);
             for(let p of particles) {
-                p.x += p.vx;
-                p.y += p.vy;
-                if(p.x < -20) p.x = width+20;
-                if(p.x > width+20) p.x = -20;
-                if(p.y < -20) p.y = height+20;
-                if(p.y > height+20) p.y = -20;
-                ctx.beginPath();
-                ctx.arc(p.x, p.y, p.size, 0, Math.PI*2);
-                ctx.fillStyle = `rgba(183, 124, 255, ${p.alpha})`;
-                ctx.fill();
-                ctx.shadowBlur = 5;
-                ctx.shadowColor = '#9d4eff';
+                p.x += p.vx; p.y += p.vy;
+                if(p.x < -20) p.x = bgWidth+20; if(p.x > bgWidth+20) p.x = -20;
+                if(p.y < -20) p.y = bgHeight+20; if(p.y > bgHeight+20) p.y = -20;
+                bgCtx.beginPath(); bgCtx.arc(p.x, p.y, p.size, 0, Math.PI*2);
+                bgCtx.fillStyle = `rgba(183, 124, 255, ${p.alpha})`; bgCtx.fill();
+                bgCtx.shadowBlur = 5; bgCtx.shadowColor = '#9d4eff';
             }
-            ctx.shadowBlur = 0;
+            bgCtx.shadowBlur = 0;
             for(let i=0;i<particles.length;i++) {
                 for(let j=i+1;j<particles.length;j++) {
-                    const dx = particles[i].x - particles[j].x;
-                    const dy = particles[i].y - particles[j].y;
-                    const dist = Math.hypot(dx,dy);
-                    if(dist < 110) {
-                        ctx.beginPath();
-                        ctx.moveTo(particles[i].x, particles[i].y);
-                        ctx.lineTo(particles[j].x, particles[j].y);
-                        ctx.strokeStyle = `rgba(157,78,255,${0.12 * (1 - dist/110)})`;
-                        ctx.lineWidth = 0.6;
-                        ctx.stroke();
-                    }
+                    const dx = particles[i].x - particles[j].x, dy = particles[i].y - particles[j].y, dist = Math.hypot(dx,dy);
+                    if(dist < 120) { bgCtx.beginPath(); bgCtx.moveTo(particles[i].x, particles[i].y); bgCtx.lineTo(particles[j].x, particles[j].y); bgCtx.strokeStyle = `rgba(157,78,255,${0.12 * (1 - dist/120)})`; bgCtx.lineWidth = 0.7; bgCtx.stroke(); }
                 }
             }
             requestAnimationFrame(drawBg);
         }
+        window.addEventListener('resize', resizeBg);
+        resizeBg(); drawBg();
         
-        window.addEventListener('resize', () => { resizeCanvas(); });
-        resizeCanvas();
-        drawBg();
-        
-        // custom cursor
-        const dot = document.getElementById('cursor-dot');
+        // cursor hover interactive scale
+        const interactiveElements = document.querySelectorAll('a, button, .product-card, .cart-icon');
         const ring = document.getElementById('cursor-ring');
-        document.addEventListener('mousemove', (e) => {
-            dot.style.transform = `translate(${e.clientX - 2}px, ${e.clientY - 2}px)`;
-            ring.style.transform = `translate(${e.clientX - 19}px, ${e.clientY - 19}px)`;
-        });
-        const interactive = document.querySelectorAll('a, button, .product-card, .cart-icon');
-        interactive.forEach(el => {
-            el.addEventListener('mouseenter', () => ring.style.transform = `scale(1.4) translate(${ring.style.transform.split('translate(')[1]?.split(',')[0] || '0'}px, ${ring.style.transform.split(',')[1]})`);
-            el.addEventListener('mouseleave', () => ring.style.transform = `scale(1) translate(${ring.style.transform.split('translate(')[1]})`);
+        interactiveElements.forEach(el => {
+            el.addEventListener('mouseenter', () => { ring.style.transform = `scale(1.5) translate(${ring.style.transform.split('translate(')[1]?.split(',')[0] || '0'}px, ${ring.style.transform.split(',')[1]})`; ring.style.borderColor = '#d4a5ff'; ring.style.width = '50px'; ring.style.height = '50px'; });
+            el.addEventListener('mouseleave', () => { ring.style.transform = `scale(1) translate(${ring.style.transform.split('translate(')[1]})`; ring.style.borderColor = 'var(--accent-primary)'; ring.style.width = '42px'; ring.style.height = '42px'; });
         });
         
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(e => { if(e.isIntersecting) e.target.classList.add('active'); });
-        }, { threshold: 0.1 });
+        const observer = new IntersectionObserver((entries) => { entries.forEach(e => { if(e.isIntersecting) e.target.classList.add('active'); }); }, { threshold: 0.1 });
         document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+        
+        // Add a subtle floating animation to feature cards
+        const style = document.createElement('style');
+        style.textContent = `@keyframes floatGlow { 0% { box-shadow: 0 0 0 0 var(--accent-glow); } 100% { box-shadow: 0 0 0 6px rgba(183,124,255,0); } } .feature-card:hover::after { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%; border-radius: 28px; animation: floatGlow 1.2s infinite; pointer-events: none; }`;
+        document.head.appendChild(style);
     </script>
 </body>
 </html>
